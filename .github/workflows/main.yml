@@ -15,17 +15,17 @@ jobs:
         # 使用action库  actions/checkout获取源码
         uses: actions/checkout@master
       # 安装Node13
-      - name: use yarn.js 1.22.10
+      - name: use Node.js 13
         # 使用action库  actions/setup-node安装node
         uses: actions/setup-node@v1
         with:
           yarn-version: 1.22.10
       # 安装依赖
-      - name: yarn install
-        run: yarn install
+      - name: npm install
+        run: npm install
         # 打包
-      - name: yarn build
-        run: yarn run build
+      - name: npm build
+        run: npm run build
       # 部署到阿里云
       - name: Deploy to Aliyun
         uses: easingthemes/ssh-deploy@v2.1.1
