@@ -2,26 +2,26 @@
   <div>
     <el-card class="box-card search-card">
       <el-form
+        ref="formSearch"
         :inline="true"
         :model="formSearch"
-        ref="formSearch"
         class="search-form"
         size="small"
         @submit.native.prevent
       >
-        <el-form-item label="分析项名称：">
+        <el-form-item label="姓名：">
           <el-input
             v-model="formSearch.name"
-            placeholder="请输入分析项名称"
+            placeholder="请输入姓名"
             @keydown.enter.native="onSearch"
-          ></el-input>
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary"  @click="onSearch">
-            <i style="font-size: 14px" class="el-icon-search"></i>
+          <el-button type="primary" @click="onSearch">
+            <i style="font-size: 14px" class="el-icon-search" />
           </el-button>
-          <el-button  @click="onSearchReset">
-            <i style="font-size: 14px" class="el-icon-refresh"></i>
+          <el-button @click="onSearchReset">
+            <i style="font-size: 14px" class="el-icon-refresh" />
           </el-button>
         </el-form-item>
       </el-form>
@@ -33,52 +33,89 @@
           size="small"
           icon="iconfont icon-Add"
           @click="addOrUpdateHandle(0)"
-          >新增</el-button
-        >
+        >新增</el-button>
         <el-button
           :disabled="!disabled"
           size="small"
           icon="el-icon-delete"
-          @click="deleteHandle(0)"
           plain
-          >批量删除</el-button
-        >
+          @click="deleteHandle(0)"
+        >批量删除</el-button>
       </div>
       <el-table
         size="medium"
         :data="tableData"
         :header-cell-style="{ 'background-color': '#fafafa', color: '#444444' }"
-        @selection-change="handleSelectionChange"
         empty-text="暂无数据"
-        style="border: 1px solid #ebeef5; width: 100%; border-bottom: none; font-size: 13px; overflow: auto"
+        style="
+          border: 1px solid #ebeef5;
+          width: 100%;
+          border-bottom: none;
+          font-size: 13px;
+          overflow: auto;
+        "
+        @selection-change="handleSelectionChange"
       >
-        <el-table-column align="center" type="selection" width="80"></el-table-column>
-        <el-table-column align="center" type="index" :index="indexMethod" label="序号" width="80"></el-table-column>
-        <el-table-column prop="funmethod" header-align="center" align="center" label="分析功能"></el-table-column>
-        <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
-        <el-table-column prop="param" header-align="center" align="center" label="参数"></el-table-column>
-        <el-table-column prop="label" header-align="center" align="center" label="书签"></el-table-column>
-        <el-table-column prop="dataFormat" header-align="center" align="center" label="数值格式"></el-table-column>
-        <el-table-column prop="updateBy" header-align="center" align="center" label="更新人"></el-table-column>
-        <el-table-column prop="updateTime" header-align="center" align="center" label="更新时间"></el-table-column>
+        <el-table-column align="center" type="selection" width="80" />
+        <el-table-column
+          align="center"
+          type="index"
+          :index="indexMethod"
+          label="序号"
+          width="80"
+        />
+        <el-table-column
+          prop="name"
+          header-align="center"
+          align="center"
+          label="姓名"
+        />
+        <el-table-column
+          prop="age"
+          header-align="center"
+          align="center"
+          label="年龄"
+        />
+        <el-table-column
+          prop="gender"
+          header-align="center"
+          align="center"
+          label="性别"
+        />
+        <el-table-column
+          prop="id"
+          header-align="center"
+          align="center"
+          label="学号"
+        />
+        <el-table-column
+          prop="college"
+          header-align="center"
+          align="center"
+          label="学院"
+        />
+        <el-table-column
+          prop="applicationAwards"
+          header-align="center"
+          align="center"
+          label="申请奖项"
+        />
         <el-table-column align="center" label="操作" width="180">
           <template slot-scope="scope">
             <el-button
               type="primary"
               size="mini"
-              @click="addOrUpdateHandle(scope.row.id)"
               icon="iconfont icon-edit"
               plain
-              >编辑</el-button
-            >
+              @click="addOrUpdateHandle(scope.row)"
+            >编辑</el-button>
             <el-button
               type="danger"
               size="mini"
               plain
-              @click="deleteHandle(scope.row.id)"
               icon="iconfont icon-del"
-              >删除</el-button
-            >
+              @click="deleteHandle(scope.row.id)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,12 +125,11 @@
         <el-pagination
           medium
           background
-          @current-change="currentChange"
           :page-size="pageData.pageSize"
           :total="pageData.total"
           layout="total, prev, pager, next, jumper"
-        >
-        </el-pagination>
+          @current-change="currentChange"
+        />
       </div>
 
       <!-- 弹窗, 新增 / 修改 -->
@@ -107,31 +143,38 @@
         top="10vh"
       >
         <el-form
+          ref="dataForm"
           :model="dataForm"
           :rules="dataRule"
-          ref="dataForm"
-          @keyup.enter.native="dataFormSubmit()"
           label-width="80px"
+          @keyup.enter.native="dataFormSubmit()"
         >
-          <el-form-item label="分析功能" prop="funmethod">
-            <el-input v-model="dataForm.funmethod" placeholder="请输入分析功能"></el-input>
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="dataForm.name" placeholder="请输入姓名" />
           </el-form-item>
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="请输入名称"></el-input>
+          <el-form-item label="年龄" prop="age">
+            <el-input v-model="dataForm.age" placeholder="请输入年龄" />
           </el-form-item>
-          <el-form-item label="参数" prop="param">
-            <el-input v-model="dataForm.param" placeholder="请输入参数"></el-input>
+          <el-form-item label="性别" prop="gender">
+            <el-input v-model="dataForm.gender" placeholder="请输入性别" />
           </el-form-item>
-          <el-form-item label="书签" prop="label">
-            <el-input v-model="dataForm.label" placeholder="请输入书签"></el-input>
+          <el-form-item label="学院" prop="college">
+            <el-input v-model="dataForm.college" placeholder="请输入学院" />
           </el-form-item>
-          <el-form-item label="数值格式" prop="dataFormat">
-            <el-input v-model="dataForm.dataFormat" placeholder="请输入数值格式"></el-input>
+          <el-form-item label="申请奖项" prop="applicationAwards">
+            <el-input
+              v-model="dataForm.applicationAwards"
+              placeholder="请输入申请奖项"
+            />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="visible = false">取消</el-button>
-          <el-button type="primary" :loading="loading" @click="dataFormSubmit()">确定</el-button>
+          <el-button
+            type="primary"
+            :loading="loading"
+            @click="dataFormSubmit()"
+          >确定</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -139,6 +182,7 @@
 </template>
 
 <script>
+import { getRewardsApplyList } from '@/api/rewardsApply'
 export default {
   data() {
     return {
@@ -146,189 +190,175 @@ export default {
       multipleSelection: [],
       addOrUpdateVisible: false,
       formSearch: {
-        name: '',
+        name: ''
       },
       disabled: false,
       pageData: {
         pageSize: 10,
         currentPage: 1,
-        total: 0,
+        total: 0
       },
 
       visible: false,
       loading: false,
       dataForm: {
         id: 0,
-        funmethod: '',
         name: '',
-        param: '',
-        label: '',
-        dataFormat: '',
-        delStatus: '',
-        createBy: '',
-        createTime: '',
-        updateBy: '',
-        updateTime: '',
-        remark: '',
+        age: '',
+        gender: '',
+        college: '',
+        applicationAwards: ''
       },
       dataRule: {
-        funmethod: [{ required: true, message: '分析功能不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '分析项名称不能为空', trigger: 'blur' }],
-        param: [{ required: true, message: '参数不能为空', trigger: 'blur' }],
-        label: [{ required: true, message: '书签不能为空', trigger: 'blur' }],
-        dataFormat: [{ required: true, message: '数值格式不能为空', trigger: 'blur' }],
-      },
-    };
+        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+        age: [{ required: true, message: '年龄不能为空', trigger: 'blur' }],
+        gender: [{ required: true, message: '性别不能为空', trigger: 'blur' }],
+        college: [{ required: true, message: '学院不能为空', trigger: 'blur' }],
+        applicationAwards: [
+          { required: true, message: '申请奖项不能为空', trigger: 'blur' }
+        ]
+      }
+    }
   },
   mounted() {
     // 页码修改成调至【】页
-    document.getElementsByClassName('el-pagination__jump')[0].childNodes[0].nodeValue = '跳至';
-    this.getDataList();
+    document.getElementsByClassName(
+      'el-pagination__jump'
+    )[0].childNodes[0].nodeValue = '跳至'
+    this.getDataList()
   },
   methods: {
     // 获取数据列表
     getDataList() {
-      let dataParam = {};
-      dataParam = this.formSearch;
-      dataParam.currentPage = this.pageData.currentPage;
-      dataParam.pageSize = this.pageData.pageSize;
-      reportItemList(dataParam).then(response => {
-        this.tableData = response.data;
-        this.pageData.total = response.count;
-      });
+      let dataParam = {}
+      dataParam = this.formSearch
+      dataParam.currentPage = this.pageData.currentPage
+      dataParam.pageSize = this.pageData.pageSize
+      getRewardsApplyList(dataParam).then((response) => {
+        this.tableData = response.data.items
+        this.pageData.total = response.data.total
+      })
     },
     // 自定义序号
     indexMethod(index) {
-      index = index + 1 + (this.pageData.currentPage - 1) * this.pageData.pageSize;
-      return index;
+      index =
+        index + 1 + (this.pageData.currentPage - 1) * this.pageData.pageSize
+      return index
     },
     // 搜索
     onSearch(e) {
-      this.getDataList();
+      this.getDataList()
     },
     // 重置
     onSearchReset() {
       this.pageData = {
         pageSize: 10,
         currentPage: 1,
-        total: 0,
-      };
-      this.formSearch = {};
-      this.getDataList();
+        total: 0
+      }
+      this.formSearch = {}
+      this.getDataList()
     },
     // 分页变化
     currentChange(currentPage) {
-      this.pageData.currentPage = currentPage;
-      this.getDataList();
+      this.pageData.currentPage = currentPage
+      this.getDataList()
     },
     // 全选-单选 监听
     handleSelectionChange(val) {
-      this.multipleSelection = val;
-      this.disabled = this.multipleSelection.length !== 0;
+      this.multipleSelection = val
+      this.disabled = this.multipleSelection.length !== 0
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
-      this.addOrUpdateVisible = true;
+    addOrUpdateHandle(row) {
+      this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.dialogInit(id);
-      });
+        this.dialogInit(row)
+      })
     },
     // 删除
     deleteHandle(id) {
-      let delIds = id !== 0 ? [id] : this.multipleSelection.map(item => item.id);
+      const delIds =
+        id !== 0 ? [id] : this.multipleSelection.map((item) => item.id)
       if (delIds.length <= 0) {
-        return;
+        return
       }
       this.$confirm('确定删除吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
+        type: 'warning'
       })
         .then(() => {
           // 删除选中的数据
-          reportItemDelete(delIds).then(response => {
+          reportItemDelete(delIds).then((response) => {
             this.$message({
               message: '操作成功',
               type: 'success',
               duration: 1000,
               onClose: () => {
-                this.getDataList();
-              },
-            });
-          });
+                this.getDataList()
+              }
+            })
+          })
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除',
-          });
-        });
+            message: '已取消删除'
+          })
+        })
     },
-    dialogInit(id) {
-      this.dataForm.id = id;
-      this.visible = true;
+    dialogInit(row) {
+      this.dataForm.id = row.id
+      this.visible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields();
+        this.$refs['dataForm'].resetFields()
         if (this.dataForm.id !== 0) {
-          reportItemInfo(this.dataForm.id).then(response => {
-            this.dataForm.funmethod = response.data.funmethod;
-            this.dataForm.name = response.data.name;
-            this.dataForm.param = response.data.param;
-            this.dataForm.label = response.data.label;
-            this.dataForm.dataFormat = response.data.dataFormat;
-            this.dataForm.delStatus = response.data.delStatus;
-            this.dataForm.createBy = response.data.createBy;
-            this.dataForm.createTime = response.data.createTime;
-            this.dataForm.updateBy = response.data.updateBy;
-            this.dataForm.updateTime = response.data.updateTime;
-            this.dataForm.remark = response.data.remark;
-          });
+          // reportItemInfo(this.dataForm.id).then((response) => {
+          this.dataForm.name = row.name
+          this.dataForm.age = row.age
+          this.dataForm.gender = row.gender
+          this.dataForm.college = row.college
+          this.dataForm.applicationAwards = row.applicationAwards
+          // })
         }
-      });
+      })
     },
     // 表单提交
     dataFormSubmit() {
-      this.$refs['dataForm'].validate(valid => {
+      this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.loading = true;
-          let param = {
+          this.loading = true
+          const param = {
             id: this.dataForm.id || undefined,
-            funmethod: this.dataForm.funmethod,
             name: this.dataForm.name,
-            param: this.dataForm.param,
-            label: this.dataForm.label,
-            dataFormat: this.dataForm.dataFormat,
-            delStatus: this.dataForm.delStatus,
-            createBy: this.dataForm.createBy,
-            createTime: this.dataForm.createTime,
-            updateBy: this.dataForm.updateBy,
-            updateTime: '',
-            remark: this.dataForm.remark,
-          };
-          let type = this.dataForm.id !== 0 ? 'update' : 'add';
+            age: this.dataForm.age,
+            gender: this.dataForm.gender,
+            college: this.dataForm.college,
+            applicationAwards: this.dataForm.applicationAwards
+          }
+          const type = this.dataForm.id !== 0 ? 'update' : 'add'
           reportItemAddOrUpdate(type, param)
-            .then(response => {
+            .then((response) => {
               this.$message({
                 message: '操作成功',
                 type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.loading = false;
-                  this.visible = false;
-                  this.getDataList();
-                },
-              });
+                  this.loading = false
+                  this.visible = false
+                  this.getDataList()
+                }
+              })
             })
-            .catch(error => {
-              this.loading = false;
-            });
+            .catch((error) => {
+              this.loading = false
+            })
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
