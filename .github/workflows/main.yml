@@ -19,13 +19,13 @@ jobs:
         # 使用action库  actions/setup-node安装node
         uses: actions/setup-node@v1
         with:
-          yarn-version: 1.22.10
+          node-version: 13
       # 安装依赖
       - name: npm install
         run: npm install
         # 打包
       - name: npm build
-        run: npm run build
+        run: npm run build:prod
       # 部署到阿里云
       - name: Deploy to Aliyun
         uses: easingthemes/ssh-deploy@v2.1.1
