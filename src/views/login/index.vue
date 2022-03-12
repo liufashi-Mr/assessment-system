@@ -68,8 +68,7 @@
             :key="role.roleId"
             :label="role.roleName"
             :value="role.roleId"
-          >
-          </el-option>
+          />
         </el-select>
       </el-form-item>
       <el-button
@@ -77,8 +76,7 @@
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
-        >登录</el-button
-      >
+      >登录</el-button>
 
       <!-- <div style="position: relative">
         <div class="tips">
@@ -103,97 +101,96 @@
     <el-dialog title="Or connect with" :visible.sync="showDialog">
       Can not be simulated on local, so please combine you own business
       simulation! ! !
-      <br />
-      <br />
-      <br />
+      <br>
+      <br>
+      <br>
       <social-sign />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
-import SocialSign from "./components/SocialSignin";
-import { login } from "@/api/user";
-import { setToken } from "@/utils/auth";
+import { validUsername } from '@/utils/validate'
+import SocialSign from './components/SocialSignin'
+
 
 export default {
-  name: "Login",
+  name: 'Login',
   components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error("用户名不能为空"));
+        callback(new Error('用户名不能为空'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("密码不能小于6位数"));
+        callback(new Error('密码不能小于6位数'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validateRole = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("请选择你的角色"));
+        callback(new Error('请选择你的角色'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       loginForm: {
-        username: "",
-        password: "",
-        role: "student",
+        username: '',
+        password: '',
+        role: 'student'
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", validator: validateUsername },
+          { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword },
+          { required: true, trigger: 'blur', validator: validatePassword }
         ],
-        role: [{ required: true, trigger: "select", validator: validateRole }],
+        role: [{ required: true, trigger: 'select', validator: validateRole }]
       },
-      passwordType: "password",
+      passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
       roles: [
-        { roleName: "管理员", roleId: "admin" },
-        { roleName: "教务处", roleId: "office" },
-        { roleName: "学生", roleId: "student" },
-        { roleName: "指导老师", roleId: "teacher" },
-        { roleName: "学院", roleId: "college" },
-        { roleName: "学工处", roleId: "xuegongchu" },
-        { roleName: "校分管", roleId: "xiaofenguan" },
-      ],
-    };
+        { roleName: '管理员', roleId: 'admin' },
+        { roleName: '教务处', roleId: 'office' },
+        { roleName: '学生', roleId: 'student' },
+        { roleName: '指导老师', roleId: 'teacher' },
+        { roleName: '学院', roleId: 'college' },
+        { roleName: '学工处', roleId: 'xuegongchu' },
+        { roleName: '校分管', roleId: 'xiaofenguan' }
+      ]
+    }
   },
   watch: {
     $route: {
-      handler: function (route) {
-        const query = route.query;
+      handler: function(route) {
+        const query = route.query
         if (query) {
-          this.redirect = query.redirect;
-          this.otherQuery = this.getOtherQuery(query);
+          this.redirect = query.redirect
+          this.otherQuery = this.getOtherQuery(query)
         }
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === "") {
-      this.$refs.username.focus();
-    } else if (this.loginForm.password === "") {
-      this.$refs.password.focus();
+    if (this.loginForm.username === '') {
+      this.$refs.username.focus()
+    } else if (this.loginForm.password === '') {
+      this.$refs.password.focus()
     }
   },
   destroyed() {
@@ -201,51 +198,51 @@ export default {
   },
   methods: {
     checkCapslock(e) {
-      const { key } = e;
-      this.capsTooltip = key && key.length === 1 && key >= "A" && key <= "Z";
+      const { key } = e
+      this.capsTooltip = key && key.length === 1 && key >= 'A' && key <= 'Z'
     },
     showPwd() {
-      if (this.passwordType === "password") {
-        this.passwordType = "";
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
       } else {
-        this.passwordType = "password";
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
-      });
+        this.$refs.password.focus()
+      })
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.loading = true;
+          this.loading = true
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({
-                path: this.redirect || "/",
-                query: this.otherQuery,
-              });
-              this.loading = false;
+                path: this.redirect || '/',
+                query: this.otherQuery
+              })
+              this.loading = false
             })
             .catch(() => {
-              this.loading = false;
-            });
+              this.loading = false
+            })
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== "redirect") {
-          acc[cur] = query[cur];
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
         }
-        return acc;
-      }, {});
-    },
-  },
-};
+        return acc
+      }, {})
+    }
+  }
+}
 </script>
 
 <style lang="scss">

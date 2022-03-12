@@ -1,10 +1,10 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from 'vue'
+import Router from 'vue-router'
 
-Vue.use(Router);
+Vue.use(Router)
 
 /* Layout */
-import Layout from "@/layout";
+import Layout from '@/layout'
 
 /* Router Modules */
 // import componentsRouter from "./modules/components";
@@ -51,43 +51,43 @@ export const constantRoutes = [
   //   ],
   // },
   {
-    path: "/login",
-    component: () => import("@/views/login/index"),
-    hidden: true,
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
   },
   {
-    path: "/auth-redirect",
-    component: () => import("@/views/login/auth-redirect"),
-    hidden: true,
+    path: '/auth-redirect',
+    component: () => import('@/views/login/auth-redirect'),
+    hidden: true
   },
   {
-    path: "/404",
-    component: () => import("@/views/error-page/404"),
-    hidden: true,
+    path: '/404',
+    component: () => import('@/views/error-page/404'),
+    hidden: true
   },
   {
-    path: "/401",
-    component: () => import("@/views/error-page/401"),
-    hidden: true,
+    path: '/401',
+    component: () => import('@/views/error-page/401'),
+    hidden: true
   },
   {
-    path: "/",
+    path: '/',
     component: Layout,
-    redirect: "/home",
+    redirect: '/home'
   },
   {
-    path: "/home",
+    path: '/home',
     component: Layout,
     children: [
       {
-        path: "",
-        component: () => import("@/views/home/index"),
-        name: "Home",
-        meta: { title: "首页", icon: "el-icon-s-home", affix: true },
-      },
-    ],
-  },
-  
+        path: '',
+        component: () => import('@/views/home/index'),
+        name: 'Home',
+        meta: { title: '首页', icon: 'el-icon-s-home', affix: true }
+      }
+    ]
+  }
+
   //   path: '/documentation',
   //   component: Layout,
   //   children: [
@@ -126,7 +126,7 @@ export const constantRoutes = [
   //     }
   //   ]
   // }
-];
+]
 
 /**
  * asyncRoutes
@@ -134,92 +134,92 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: "/userManage",
+    path: '/userManage',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/userManage/index"),
-        name: "userManage",
-        meta: { title: "用户管理", icon: "user", noCache: true },
-      },
-    ],
+        path: 'index',
+        component: () => import('@/views/userManage/index'),
+        name: 'userManage',
+        meta: { title: '用户管理', icon: 'user', noCache: true }
+      }
+    ]
   },
   {
-    path: "/rewardsDeclare",
+    path: '/rewardsDeclare',
     // redirect:"/rewardsDeclare/declareList",
     component: Layout,
     alwaysShow: true,
-    meta: { title: "评奖管理", icon: "el-icon-medal", noCache: true },
+    meta: { title: '评奖管理', icon: 'el-icon-medal', noCache: true },
     children: [
       {
-        path: "rewardList",
-        component: () => import("@/views/rewardsDeclare/rewardList"),
-        name: "RewardList",
+        path: 'rewardList',
+        component: () => import('@/views/rewardsDeclare/rewardList'),
+        name: 'RewardList',
         meta: {
-          title: "奖励概览",
-          icon: "education",
+          title: '奖励概览',
+          icon: 'education',
           noCache: true,
-          roles: ["student"],
-        },
+          roles: ['student']
+        }
       },
       {
-        path: "declareList",
-        component: () => import("@/views/rewardsDeclare/declareList"),
-        name: "DeclareList",
-        meta: { title: "申请列表", icon: "list", noCache: true },
-      },
-    ],
+        path: 'declareList',
+        component: () => import('@/views/rewardsDeclare/declareList'),
+        name: 'DeclareList',
+        meta: { title: '申请列表', icon: 'list', noCache: true }
+      }
+    ]
   },
   {
-    path: "/assessmentManage",
+    path: '/assessmentManage',
     component: Layout,
-    meta: { title: "评优管理", icon: "el-icon-trophy", noCache: true },
+    meta: { title: '评优管理', icon: 'el-icon-trophy', noCache: true },
     children: [
       {
-        path: "rewardList",
-        component: () => import("@/views/assessmentManage/rewardList"),
-        name: "RewardList",
-        meta: { title: "评优概览", icon: "education", noCache: true },
+        path: 'rewardList',
+        component: () => import('@/views/assessmentManage/rewardList'),
+        name: 'RewardList',
+        meta: { title: '评优概览', icon: 'education', noCache: true }
       },
       {
-        path: "declareList",
-        component: () => import("@/views/assessmentManage/declareList"),
-        name: "DeclareList",
-        meta: { title: "申请列表", icon: "list", noCache: true },
-      },
-    ],
+        path: 'declareList',
+        component: () => import('@/views/assessmentManage/declareList'),
+        name: 'DeclareList',
+        meta: { title: '申请列表', icon: 'list', noCache: true }
+      }
+    ]
   },
   {
-    path: "/processManage",
+    path: '/processManage',
     component: Layout,
-    meta: { title: "流程管理", icon: "el-icon-set-up", noCache: true },
+    meta: { title: '流程管理', icon: 'el-icon-set-up', noCache: true },
     children: [
       {
-        path: "rewardsProcess",
-        component: () => import("@/views/processManage/rewardsProcess"),
-        name: "RewardsProcess",
-        meta: { title: "奖励审核流程", icon: "el-icon-setting", noCache: true },
+        path: 'rewardsProcess',
+        component: () => import('@/views/processManage/rewardsProcess'),
+        name: 'RewardsProcess',
+        meta: { title: '奖励审核流程', icon: 'el-icon-setting', noCache: true }
       },
       {
-        path: "assessmentProcess",
-        component: () => import("@/views/processManage/assessmentProcess"),
-        name: "AssessmentProcess",
-        meta: { title: "评优审核流程", icon: "el-icon-setting", noCache: true },
+        path: 'assessmentProcess',
+        component: () => import('@/views/processManage/assessmentProcess'),
+        name: 'AssessmentProcess',
+        meta: { title: '评优审核流程', icon: 'el-icon-setting', noCache: true }
       },
       {
-        path: "total",
-        component: () => import("@/views/processManage/total"),
-        name: "Total",
-        meta: { title: "汇总统计", icon: "el-icon-s-data", noCache: true },
+        path: 'total',
+        component: () => import('@/views/processManage/total'),
+        name: 'Total',
+        meta: { title: '汇总统计', icon: 'el-icon-s-data', noCache: true }
       },
       {
-        path: "informationInout",
-        component: () => import("@/views/processManage/informationInout"),
-        name: "InformationInout",
-        meta: { title: "信息导入导出", icon: "excel", noCache: true },
-      },
-    ],
+        path: 'informationInout',
+        component: () => import('@/views/processManage/informationInout'),
+        name: 'InformationInout',
+        meta: { title: '信息导入导出', icon: 'excel', noCache: true }
+      }
+    ]
   },
   // {
   //   path: '/permission',
@@ -265,21 +265,21 @@ export const asyncRoutes = [
 
   // {
   {
-    path: "/icon",
+    path: '/icon',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/icons/index"),
-        name: "Icons",
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
         meta: {
-          title: "Icons",
-          icon: "icon",
+          title: 'Icons',
+          icon: 'icon',
           noCache: true,
-          roles: ["student"],
-        },
-      },
-    ],
+          roles: ['student']
+        }
+      }
+    ]
   },
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
@@ -371,41 +371,41 @@ export const asyncRoutes = [
   // },
 
   {
-    path: "/excel",
+    path: '/excel',
     component: Layout,
-    redirect: "/excel/export-excel",
-    name: "Excel",
+    redirect: '/excel/export-excel',
+    name: 'Excel',
     hidden: true,
     meta: {
-      title: "Excel",
-      icon: "excel",
+      title: 'Excel',
+      icon: 'excel'
     },
     children: [
       {
-        path: "export-excel",
-        component: () => import("@/views/excel/export-excel"),
-        name: "ExportExcel",
-        meta: { title: "Export Excel" },
+        path: 'export-excel',
+        component: () => import('@/views/excel/export-excel'),
+        name: 'ExportExcel',
+        meta: { title: 'Export Excel' }
       },
       {
-        path: "export-selected-excel",
-        component: () => import("@/views/excel/select-excel"),
-        name: "SelectExcel",
-        meta: { title: "Export Selected" },
+        path: 'export-selected-excel',
+        component: () => import('@/views/excel/select-excel'),
+        name: 'SelectExcel',
+        meta: { title: 'Export Selected' }
       },
       {
-        path: "export-merge-header",
-        component: () => import("@/views/excel/merge-header"),
-        name: "MergeHeader",
-        meta: { title: "Merge Header" },
+        path: 'export-merge-header',
+        component: () => import('@/views/excel/merge-header'),
+        name: 'MergeHeader',
+        meta: { title: 'Merge Header' }
       },
       {
-        path: "upload-excel",
-        component: () => import("@/views/excel/upload-excel"),
-        name: "UploadExcel",
-        meta: { title: "Upload Excel" },
-      },
-    ],
+        path: 'upload-excel',
+        component: () => import('@/views/excel/upload-excel'),
+        name: 'UploadExcel',
+        meta: { title: 'Upload Excel' }
+      }
+    ]
   },
 
   // {
@@ -482,22 +482,22 @@ export const asyncRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
-  { path: "*", redirect: "/404", hidden: true },
-];
+  { path: '*', redirect: '/404', hidden: true }
+]
 
 const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes,
-  });
+    routes: constantRoutes
+  })
 
-const router = createRouter();
+const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter();
-  router.matcher = newRouter.matcher; // reset router
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
 }
 
-export default router;
+export default router
