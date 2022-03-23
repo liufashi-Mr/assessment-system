@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-
+import { getToken } from "@/utils/auth";
 Vue.use(Router);
 
 /* Layout */
@@ -87,13 +87,6 @@ export const constantRoutes = [
       },
     ],
   },
-];
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
   {
     path: "/userManage",
     component: Layout,
@@ -288,7 +281,14 @@ export const asyncRoutes = [
           title: "我的审核",
           icon: "tree-table",
           noCache: true,
-          roles: ["admin","office", "teacher", "college", "xuegongchu", "xiaofenguan"],
+          roles: [
+            "admin",
+            "office",
+            "teacher",
+            "college",
+            "xuegongchu",
+            "xiaofenguan",
+          ],
         },
       },
     ],
@@ -337,6 +337,12 @@ export const asyncRoutes = [
   },
   { path: "*", redirect: "/404", hidden: true },
 ];
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [];
 
 const createRouter = () =>
   new Router({

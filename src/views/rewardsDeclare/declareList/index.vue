@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { getRewardsApplyList } from '@/api/rewardsApply'
+import { getRewards } from '@/api/rewards'
 export default {
   data() {
     return {
