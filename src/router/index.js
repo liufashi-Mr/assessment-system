@@ -87,8 +87,7 @@ export const constantRoutes = [
       },
     ],
   },
-  
-  { path: "*", redirect: "/404", hidden: true },
+
 ];
 
 /**
@@ -115,7 +114,7 @@ export const asyncRoutes = [
   },
   {
     path: "/rewardsDeclare",
-    // redirect:"/rewardsDeclare/declareList",
+    redirect:"/rewardsDeclare/rewardList",
     component: Layout,
     alwaysShow: true,
     meta: { title: "评奖系统", icon: "el-icon-medal", noCache: true },
@@ -207,6 +206,7 @@ export const asyncRoutes = [
   // },
   {
     path: "/processManage",
+    redirect: "/processManage/process",
     component: Layout,
     meta: {
       title: "流程管理",
@@ -272,25 +272,6 @@ export const asyncRoutes = [
           ],
         },
       },
-      {
-        path: "detail/:applyId",
-        component: () => import("@/views/myCheck/applyDetail"),
-        name: "ApplyDetail",
-        hidden:true,
-        meta: {
-          title: "审核详情",
-          icon: "tree-table",
-          noCache: true,
-          roles: [
-            "admin",
-            "office",
-            "teacher",
-            "college",
-            "xuegongchu",
-            "xiaofenguan",
-          ],
-        },
-      },
     ],
   },
   {
@@ -310,6 +291,7 @@ export const asyncRoutes = [
       },
     ],
   },
+  { path: "*", redirect: "/404", hidden: true },
 ];
 
 const createRouter = () =>
