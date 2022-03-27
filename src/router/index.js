@@ -87,6 +87,15 @@ export const constantRoutes = [
       },
     ],
   },
+  
+  { path: "*", redirect: "/404", hidden: true },
+];
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: "/userManage",
     component: Layout,
@@ -112,17 +121,6 @@ export const constantRoutes = [
     meta: { title: "评奖系统", icon: "el-icon-medal", noCache: true },
     children: [
       {
-        path: "rewardApply",
-        component: () => import("@/views/rewardsDeclare/rewardApply"),
-        name: "RewardApply",
-        meta: {
-          title: "奖励申请",
-          icon: "education",
-          noCache: true,
-          roles: ["student", "admin"],
-        },
-      },
-      {
         path: "rewardList",
         component: () => import("@/views/rewardsDeclare/rewardList"),
         name: "RewardList",
@@ -142,9 +140,9 @@ export const constantRoutes = [
         },
       },
       {
-        path: "declareList",
-        component: () => import("@/views/rewardsDeclare/declareList"),
-        name: "DeclareList",
+        path: "applyList",
+        component: () => import("@/views/rewardsDeclare/applyList"),
+        name: "ApplyList",
         meta: {
           title: "申请列表",
           icon: "list",
@@ -162,84 +160,67 @@ export const constantRoutes = [
       },
     ],
   },
-  {
-    path: "/assessmentManage",
-    component: Layout,
-    meta: { title: "评优系统", icon: "el-icon-trophy", noCache: true },
-    children: [
-      {
-        path: "assessmentApply",
-        component: () => import("@/views/assessmentManage/assessmentApply"),
-        name: "assessmentApply",
-        meta: {
-          title: "评优申请",
-          icon: "education",
-          noCache: true,
-          roles: ["student", "admin"],
-        },
-      },
-      {
-        path: "rewardList",
-        component: () => import("@/views/assessmentManage/rewardList"),
-        name: "RewardList",
-        meta: {
-          title: "评优概览",
-          icon: "education",
-          noCache: true,
-          roles: [
-            "student",
-            "admin",
-            "office",
-            "teacher",
-            "college",
-            "xuegongchu",
-            "xiaofenguan",
-          ],
-        },
-      },
-      {
-        path: "declareList",
-        component: () => import("@/views/assessmentManage/declareList"),
-        name: "DeclareList",
-        meta: {
-          title: "申请列表",
-          icon: "list",
-          noCache: true,
-          roles: [
-            "student",
-            "admin",
-            "office",
-            "teacher",
-            "college",
-            "xuegongchu",
-            "xiaofenguan",
-          ],
-        },
-      },
-    ],
-  },
+  // {
+  //   path: "/assessmentManage",
+  //   component: Layout,
+  //   meta: { title: "评优系统", icon: "el-icon-trophy", noCache: true },
+  //   children: [
+  //     {
+  //       path: "assessmentList",
+  //       component: () => import("@/views/assessmentManage/assessmentList"),
+  //       name: "AssessmentList",
+  //       meta: {
+  //         title: "评优概览",
+  //         icon: "education",
+  //         noCache: true,
+  //         roles: [
+  //           "student",
+  //           "admin",
+  //           "office",
+  //           "teacher",
+  //           "college",
+  //           "xuegongchu",
+  //           "xiaofenguan",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       path: "applyList",
+  //       component: () => import("@/views/assessmentManage/applyList"),
+  //       name: "ApplyList_",
+  //       meta: {
+  //         title: "申请列表",
+  //         icon: "list",
+  //         noCache: true,
+  //         roles: [
+  //           "student",
+  //           "admin",
+  //           "office",
+  //           "teacher",
+  //           "college",
+  //           "xuegongchu",
+  //           "xiaofenguan",
+  //         ],
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: "/processManage",
     component: Layout,
-    meta: { title: "流程管理", icon: "el-icon-set-up", noCache: true },
+    meta: {
+      title: "流程管理",
+      icon: "el-icon-set-up",
+      noCache: true,
+      roles: ["admin", "office"],
+    },
     children: [
       {
-        path: "rewardsProcess",
-        component: () => import("@/views/processManage/rewardsProcess"),
-        name: "RewardsProcess",
+        path: "process",
+        component: () => import("@/views/processManage/process"),
+        name: "Process",
         meta: {
-          title: "奖励审核流程",
-          icon: "el-icon-setting",
-          noCache: true,
-          roles: ["admin", "office"],
-        },
-      },
-      {
-        path: "assessmentProcess",
-        component: () => import("@/views/processManage/assessmentProcess"),
-        name: "AssessmentProcess",
-        meta: {
-          title: "评优审核流程",
+          title: "审核流程",
           icon: "el-icon-setting",
           noCache: true,
           roles: ["admin", "office"],
@@ -291,39 +272,16 @@ export const constantRoutes = [
           ],
         },
       },
-    ],
-  },
-  {
-    path: "/apply",
-    component: Layout,
-    children: [
       {
-        path: "index",
-        component: () => import("@/views/apply/index"),
-        name: "Apply",
+        path: "detail/:applyId",
+        component: () => import("@/views/myCheck/applyDetail"),
+        name: "ApplyDetail",
+        hidden:true,
         meta: {
-          title: "评奖评优发布",
-          icon: "guide",
-          noCache: true,
-          roles: ["office"],
-        },
-      },
-    ],
-  },
-  {
-    path: "/icon",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        component: () => import("@/views/icons/index"),
-        name: "Icons",
-        meta: {
-          title: "Icons",
-          icon: "icon",
+          title: "审核详情",
+          icon: "tree-table",
           noCache: true,
           roles: [
-            "student",
             "admin",
             "office",
             "teacher",
@@ -335,14 +293,24 @@ export const constantRoutes = [
       },
     ],
   },
-  { path: "*", redirect: "/404", hidden: true },
+  {
+    path: "/result",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/result/index"),
+        name: "Result",
+        meta: {
+          title: "结果公布",
+          icon: "guide",
+          noCache: true,
+          roles: ["office"],
+        },
+      },
+    ],
+  },
 ];
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [];
 
 const createRouter = () =>
   new Router({

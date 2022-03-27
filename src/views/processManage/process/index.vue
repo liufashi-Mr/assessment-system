@@ -13,7 +13,7 @@
       <el-collapse v-for="item in processList" :key="item.id">
         <el-collapse-item :title="item.flowName" :name="item.id">
           <div class="box">
-            <el-steps active="5">
+            <el-steps :active="5">
               <el-step v-if="item.stepOne" :title="item.stepOne"></el-step>
               <el-step v-if="item.stepTwo" :title="item.stepTwo"></el-step>
               <el-step v-if="item.stepThree" :title="item.stepThree"></el-step>

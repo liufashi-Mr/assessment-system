@@ -8,9 +8,9 @@ export function createProcess(data) {
   });
 }
 export function getProcess(data) {
-    return request({
-      url: "/process/getProcess",
-      method: "post",
-      data,
-    });
-  }
+  return request({
+    url: "/process/getProcess",
+    method: "post",
+    data,
+  });
+}

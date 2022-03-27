@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { getRewards } from '@/api/rewards'
+// import { getRewardsApplyList } from '@/api/rewards'
 export default {
   data() {
     return {
@@ -234,10 +234,10 @@ export default {
       dataParam = this.formSearch
       dataParam.currentPage = this.pageData.currentPage
       dataParam.pageSize = this.pageData.pageSize
-      getRewardsApplyList(dataParam).then((response) => {
-        this.tableData = response.data.items
-        this.pageData.total = response.data.total
-      })
+      // getRewardsApplyList(dataParam).then((response) => {
+      //   this.tableData = response.data.items
+      //   this.pageData.total = response.data.total
+      // })
     },
     // 自定义序号
     indexMethod(index) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-      评优申请
+      detail
   </div>
 </template>
 

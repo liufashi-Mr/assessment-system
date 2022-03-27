@@ -95,10 +95,34 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column
+          header-align="center"
+          align="center"
+          label="领取结束时间"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{
+                getStatus(
+                  new Date(scope.row.startTime).getTime(),
+                  new Date(scope.row.endTime).getTime()
+                )
+              }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column header-align="center" align="center" label="奖励范围">
           <template slot-scope="scope">
             <span>
-              {{ getScope(scope) }}
+              {{
+                scope.row.majorId || scope.row.collegeId || scope.row.typeId
+                  ? getName(
+                      scope.row.majorId ||
+                        scope.row.collegeId ||
+                        scope.row.typeId
+                    )
+                  : "全体学生"
+              }}
             </span>
           </template></el-table-column
         >
@@ -115,16 +139,8 @@
               size="mini"
               icon="iconfont icon-edit"
               plain
+              @click="applyReward(scope.row.id)"
               >申请</el-button
-            >
-            <el-button
-              v-if="$store.getters.token === 'office'"
-              type="primary"
-              size="mini"
-              icon="iconfont icon-edit"
-              plain
-              @click="addOrUpdateHandle(scope.row)"
-              >编辑</el-button
             >
             <el-button
               v-if="$store.getters.token === 'office'"
@@ -136,13 +152,24 @@
               >删除</el-button
             >
             <el-button
-              v-if="['office', 'admin'].includes($store.getters.token)"
+              v-if="$store.getters.token === 'office'"
+              type="primary"
+              size="mini"
+              icon="iconfont icon-edit"
+              plain
+              @click="addOrUpdateHandle(scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              v-if="
+                ['office', 'admin', 'student'].includes($store.getters.token)
+              "
               type="primary"
               size="mini"
               plain
               icon="iconfont icon-del"
-              @click="processSelect(scope.row.id)"
-              >选择流程</el-button
+              @click="getRewardDetailData(scope.row.id)"
+              >查看详情</el-button
             >
           </template>
         </el-table-column>
@@ -176,6 +203,9 @@
         width="30vw"
         top="10vh"
       >
+        <div style="color: red; margin-bottom: 20px; line-height: 24px">
+          *注意： 时间不选择时则为长期有效，发放对象不选则为全体学生。
+        </div>
         <el-form
           ref="dataForm"
           :model="dataForm"
@@ -195,14 +225,48 @@
               placeholder="请输入奖项描述"
             />
           </el-form-item>
-          <el-form-item label="领取开始时间" prop="startTime">
-            <el-input
-              v-model="dataForm.startTime"
-              placeholder="请输入奖项时间"
-            />
+          <el-form-item label="专业/学院">
+            <el-cascader
+              v-model="dataForm.studentValue"
+              :options="universeList"
+              :props="{ checkStrictly: true, label: 'name', value: 'id' }"
+              placeholder="请选择发放对象"
+              filterable
+              clearable
+            ></el-cascader>
           </el-form-item>
-          <el-form-item label="领取结束时间" prop="endTime">
-            <el-input v-model="dataForm.endTime" placeholder="请输入面向学院" />
+          <el-form-item label="开始时间" prop="startTime">
+            <el-date-picker
+              v-model="dataForm.startTime"
+              align="right"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="pickerOptions"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间" prop="endTime">
+            <el-date-picker
+              v-model="dataForm.endTime"
+              align="right"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="pickerOptions"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="选择流程" prop="process">
+            <el-select
+              v-model="dataForm.rewardProcess"
+              placeholder="选择审核流程"
+            >
+              <el-option
+                v-for="item in processList"
+                :key="item.id"
+                :label="item.flowName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -213,17 +277,112 @@
         </span>
       </el-dialog>
     </el-card>
+    <el-drawer size="800px" title="奖励详情" :visible.sync="drawer">
+      <div class="drawer">
+        <div>
+          <div>奖励名称：</div>
+          <div>{{ rewardDetail.rewardName }}</div>
+        </div>
+        <div v-if="rewardDetail.endTime || rewardDetail.startTime">
+          <div>领取时间：</div>
+          <div>
+            {{ rewardDetail.startTime || "不限" }} ~
+            {{ rewardDetail.endTime || "不限" }}
+          </div>
+        </div>
+        <div v-if="!rewardDetail.endTime && !rewardDetail.startTime">
+          <div>领取时间：</div>
+          <div>不限制时间</div>
+        </div>
+        <div>
+          <div>发放对象：</div>
+          <div>
+            {{
+              rewardDetail.majorId ||
+              rewardDetail.collegeId ||
+              rewardDetail.typeId
+                ? getName(
+                    rewardDetail.majorId ||
+                      rewardDetail.collegeId ||
+                      rewardDetail.typeId
+                  )
+                : "全体学生"
+            }}
+          </div>
+        </div>
+        <div>
+          <div>描述/条件：</div>
+          <div>{{ rewardDetail.rewardDesc }}</div>
+        </div>
+        <div>
+          <div>流程描述：</div>
+          <div>{{ rewardDetail.description }}</div>
+        </div>
+        <div style="height: 300px; font-size: 18px">
+          <el-steps direction="vertical" :active="5">
+            <el-step
+              v-if="rewardDetail.stepOne"
+              :title="rewardDetail.stepOne"
+              description="审核流程第一步"
+            ></el-step>
+            <el-step
+              v-if="rewardDetail.stepTwo"
+              :title="rewardDetail.stepTwo"
+              description="审核流程第二步"
+            ></el-step>
+            <el-step
+              v-if="rewardDetail.stepThree"
+              :title="rewardDetail.stepThree"
+              description="审核流程第三步"
+            ></el-step>
+            <el-step
+              v-if="rewardDetail.stepFour"
+              description="审核流程第四步"
+              :title="rewardDetail.stepFour"
+            ></el-step>
+            <el-step
+              description="审核流程第五步"
+              v-if="rewardDetail.stepFive"
+              :title="rewardDetail.stepFive"
+            ></el-step>
+          </el-steps>
+        </div>
+      </div>
+    </el-drawer>
+    <apply
+      :detail="rewardDetail"
+      :applyDialogVisible="applyDialogVisible"
+      @setVisible="applyDialogVisible = false"
+    />
   </div>
 </template>
 
 <script>
-import { getRewards } from "@/api/rewards";
+import {
+  getRewards,
+  updateReward,
+  addReward,
+  removeReward,
+  getRewardDetail,
+} from "@/api/rewards";
+import { getProcess } from "@/api/process";
+import { getUniverse } from "@/api/manage";
+import moment from "moment";
 export default {
+  components: {
+    apply: () => import("./apply.vue"),
+  },
   data() {
     return {
+      drawer: false,
+      universeList: [],
+      applyDialogVisible: false,
+      flattenUniverseList: [],
       tableData: [],
       multipleSelection: [],
       addOrUpdateVisible: false,
+      processList: [],
+      rewardDetail: {},
       formSearch: {
         keyword: "",
       },
@@ -242,6 +401,18 @@ export default {
         description: "",
         startTime: "",
         endTime: "",
+        studentValue: [],
+        rewardProcess: 1,
+      },
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              picker.$emit("pick", new Date());
+            },
+          },
+        ],
       },
       dataRule: {
         rewardName: [
@@ -256,8 +427,18 @@ export default {
         // endTime: [
         //   { required: true, message: "面向学院不能为空", trigger: "blur" },
         // ],
+        rewardProcess: [
+          { required: true, message: "请选择流程", trigger: "blur" },
+        ],
       },
     };
+  },
+  created() {
+    getProcess().then(({ data }) => (this.processList = data));
+    getUniverse().then((res) => {
+      this.universeList = res.data;
+      this.flattenUniverseList = res.flatData;
+    });
   },
   mounted() {
     // 页码修改成调至【】页
@@ -267,9 +448,20 @@ export default {
     this.getDataList();
   },
   methods: {
-    getScope(scope) {
-      if (!scope.row.level) return "所有学生";
-      return scope.row.collegeType || scope.row.collegeName || scope.row.major;
+    getStatus(s, e) {
+      const t = Date.now();
+      if (t > s && t < e) {
+        return "进行中";
+      } else if (t < s) {
+        return "未开始";
+      } else {
+        return "已结束";
+      }
+    },
+    getName(id) {
+      return this.flattenUniverseList[
+        this.flattenUniverseList.findIndex((item) => item.id == +id)
+      ]?.name;
     },
     // 获取数据列表
     getDataList() {
@@ -302,6 +494,12 @@ export default {
       this.formSearch = {};
       this.getDataList();
     },
+    getRewardDetailData(rewardId, isApply) {
+      if (!isApply) this.drawer = true;
+      getRewardDetail({ rewardId }).then(({ data }) => {
+        this.rewardDetail = data;
+      });
+    },
     // 分页变化
     currentChange(currentPage) {
       this.pageData.currentPage = currentPage;
@@ -320,12 +518,7 @@ export default {
       });
     },
     // 删除
-    deleteHandle(id) {
-      const delIds =
-        id !== 0 ? [id] : this.multipleSelection.map((item) => item.id);
-      if (delIds.length <= 0) {
-        return;
-      }
+    deleteHandle(rewardId) {
       this.$confirm("确定删除吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -333,7 +526,7 @@ export default {
       })
         .then(() => {
           // 删除选中的数据
-          reportItemDelete(delIds).then((response) => {
+          removeReward({ rewardId }).then((response) => {
             this.$message({
               message: "操作成功",
               type: "success",
@@ -351,58 +544,98 @@ export default {
           });
         });
     },
-    processSelect(id) {},
     dialogInit(row) {
       this.dataForm.id = row.id;
       this.visible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].resetFields();
-        if (this.dataForm.id !== 0) {
-          // reportItemInfo(this.dataForm.id).then((response) => {
+        if (this.dataForm.id) {
           this.dataForm.rewardName = row.rewardName;
           this.dataForm.description = row.description;
-          this.dataForm.startTime = row.startTime || "";
-          this.dataForm.endTime = row.endTime || "";
-          // this.dataForm.condition = row.condition;
-          // })
+          this.dataForm.startTime = row.startTime
+            ? new Date(row.startTime)
+            : "";
+          this.dataForm.endTime = row.endTime ? new Date(row.endTime) : "";
+          this.dataForm.studentValue = [
+            +row.typeId,
+            +row.collegeId,
+            +row.majorId,
+          ].filter((item) => item);
+          this.dataForm.rewardProcess = row.rewardProcess;
         }
       });
     },
     // 表单提交
     dataFormSubmit() {
+      console.log(this.dataForm.studentValue);
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
           this.loading = true;
-          const param = {
+          const params = {
             id: this.dataForm.id || undefined,
-            name: this.dataForm.name,
-            mark: this.dataForm.mark,
-            time: this.dataForm.time,
-            college: this.dataForm.college,
-            condition: this.dataForm.condition,
+            rewardName: this.dataForm.rewardName,
+            description: this.dataForm.description,
+            startTime: this.dataForm.startTime
+              ? moment(this.dataForm.startTime).format("YYYY-MM-DD")
+              : "",
+            endTime: this.dataForm.endTime
+              ? moment(this.dataForm.endTime).format("YYYY-MM-DD")
+              : "",
+            typeId: this.dataForm.studentValue[0],
+            collegeId: this.dataForm.studentValue[1],
+            majorId: this.dataForm.studentValue[2],
+            rewardProcess: this.dataForm.rewardProcess,
           };
-          const type = this.dataForm.id !== 0 ? "update" : "add";
-          reportItemAddOrUpdate(type, param)
-            .then((response) => {
-              this.$message({
-                message: "操作成功",
-                type: "success",
-                duration: 1000,
-                onClose: () => {
-                  this.loading = false;
+          if (this.dataForm.id) {
+            updateReward(params)
+              .then((res) => {
+                if (res.code === 200) {
+                  this.$message.success("修改成功");
                   this.visible = false;
+                  this.loading = false;
                   this.getDataList();
-                },
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                this.loading = false;
               });
-            })
-            .catch((error) => {
-              this.loading = false;
-            });
+          } else {
+            addReward(params)
+              .then((res) => {
+                if (res.code === 200) {
+                  this.$message.success("添加成功");
+                  this.visible = false;
+                  this.loading = false;
+                  this.getDataList();
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                this.loading = false;
+              });
+          }
         }
       });
+    },
+    applyReward(id) {
+      this.applyDialogVisible = true;
+      this.getRewardDetailData(id, true);
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.drawer {
+  padding: 0 24px;
+  > div {
+    display: flex;
+    font-size: 14px;
+    margin-bottom: 18px;
+    > div {
+      margin-bottom: 8px;
+    }
+  }
+}
+</style>
