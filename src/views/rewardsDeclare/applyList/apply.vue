@@ -37,7 +37,7 @@
             <div>
               <div>附件</div>
               <el-upload
-                action="http://localhost:3000/file/upload"
+                action="http://localhost:3001/file/upload"
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove"
                 :on-success="handleUpload"

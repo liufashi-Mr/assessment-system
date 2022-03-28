@@ -187,7 +187,7 @@
         />
       </div>
       <!-- <el-upload
-          action="http://localhost:3000/upload"
+          action="http://localhost:3001/upload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove">

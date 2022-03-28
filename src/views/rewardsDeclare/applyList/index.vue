@@ -164,7 +164,7 @@
           <div>
             <div>附件</div>
             <el-upload
-              action="http://localhost:3000/file/upload"
+              action="http://localhost:3001/file/upload"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove"
               :on-success="handleUpload"
@@ -437,7 +437,7 @@ export default {
       console.log(file);
       let fileType = file.name.split(".")[1].toUpperCase();
       if (fileType === "PNG" || fileType === "JPG" || fileType === "JPEG") {
-        this.dialogUrl = "http://localhost:3000/" + file?.response?.photoPath;
+        this.dialogUrl = "http://localhost:3001/" + file?.response?.photoPath;
         this.dialogVisible = true;
       }
     },
