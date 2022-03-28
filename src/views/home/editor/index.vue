@@ -1,74 +1,74 @@
 <template>
-  <div class="dashboard-editor-container">
-    <div class="clearfix">
-        您是：
-      <div class="info-container">
-        <span class="display_name">{{ name }}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;"> {{ roleName }} Dashboard</span>
-      </div>
+    <div>  <!--与上边距相差 20px的距离-->
+      <el-row class="home" :gutter="20">
+　　     <!--左边占据 8 -->
+        <el-col :span="8">
+          <!--上面个人信息-->
+          <el-card shadow="hover" style="height: 290px">
+            鼠标悬浮时显显示
+          </el-card>
+          <!--下面信息框-->
+          <el-card shadow="hover" style="height: 633px;margin-top: 20px">
+            鼠标悬浮时显显示
+          </el-card>
+        </el-col>
+        <!--右边占据16-->
+        <el-col :span="16">
+          <!--6个显示金额-->
+          <div class="num">
+            <el-card shadow="hover" v-for="item in 6" :key="item">
+              <i class="icon"></i>
+              <div class="detail">
+                <p class="num">￥ 1234</p>
+                <p class="txt">今日支付订单</p>
+              </div>
+            </el-card>
+          </div>
+          <!--显示流程图-->
+          <el-card shadow="hover">
+            <div style="height: 280px"></div>
+          </el-card>
+         <!--左边最下面两个流程图-->
+          <div class="graph">
+            <el-card shadow="hover">
+              <div style="height: 260px"></div>
+            </el-card>
+            <el-card shadow="hover">
+              <div style="height: 260px"></div>
+            </el-card>
+          </div>
+        </el-col>
+      </el-row>
     </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif" />
-    </div>
-  </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import PanThumb from "@/components/PanThumb";
-import GithubCorner from "@/components/GithubCorner";
-import getRoleName from "@/utils/getRoleName";
-import { getToken } from "@/utils/auth";
-
-export default {
-  name: "DashboardEditor",
-  components: { PanThumb, GithubCorner },
-  data() {
-    return {
-      emptyGif:
-        "https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3",
-      roleName: "",
-    };
-  },
-  created() {
-    this.roleName = getRoleName(getToken());
-  },
-  computed: {
-    ...mapGetters(["name", "avatar", "roles"]),
-  },
-};
+    export default {
+        
+    }
 </script>
 
 <style lang="scss" scoped>
-.emptyGif {
-  display: block;
-  width: 45%;
-  margin: 0 auto;
+.home .num {
+  display: flex; /*对于一行会自动弹性布局*/
+  flex-wrap: wrap; /*对于6个模块需要换行*/
+  justify-content: space-between; /*表示水平两端对齐，justify-content：水平对齐的方式*/
 }
-
-.dashboard-editor-container {
-  background-color: #e3e3e3;
-  min-height: 100vh;
-  padding: 50px 60px 0px;
-  .pan-info-roles {
-    font-size: 24px;
-    font-weight: 700;
-    color: #333;
-    display: block;
-    margin-top: 30px;
-  }
-  .info-container {
-    position: relative;
-    margin-left: 190px;
-    height: 150px;
-    line-height: 200px;
-    .display_name {
-      font-size: 48px;
-      line-height: 48px;
-      color: #212121;
-      position: absolute;
-      top: 25px;
-    }
-  }
+ 
+.home .num .el-card {
+  width: 32%;
+  margin-bottom: 20px; /*模块之前有间隔*/
+}
+ 
+ 
+.home .graph {
+  display: flex; /*对于一行会自动弹性布局*/
+  justify-content: space-between; /*表示水平两端对齐，justify-content：水平对齐的方式*/
+}
+ 
+.home .graph .el-card {
+  width: 49%;
+  margin-top: 20px; /*模块之前有间隔*/
 }
 </style>
+
