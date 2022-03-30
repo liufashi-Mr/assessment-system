@@ -37,7 +37,7 @@
             <div>
               <div>附件</div>
               <el-upload
-                action="http://localhost:3000/file/upload"
+                action="http://localhost:3001/file/upload"
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove"
                 :on-success="handleUpload"
@@ -88,9 +88,9 @@ export default {
     this.form = {
       ...this.form,
       rewardId: this.detail.rewardId,
-      studentId: JSON.parse(getInfo())?.studentId,
-      studentName: JSON.parse(getInfo())?.studentName,
-      studentNumber: JSON.parse(getInfo())?.studentNumber,
+      studentId: getInfo()?.studentId,
+      studentName: getInfo()?.studentName,
+      studentNumber: getInfo()?.studentNumber,
     };
     console.log(this.form)
   },
@@ -116,7 +116,7 @@ export default {
     handlePictureCardPreview(file) {
       let fileType = file.name.split(".")[1].toUpperCase();
       if (fileType === "PNG" || fileType === "JPG" || fileType === "JPEG") {
-        this.dialogUrl = "http://localhost:3000/" + file?.response?.photoPath;
+        this.dialogUrl = "http://localhost:3001/" + file?.response?.photoPath;
         this.dialogVisible = true;
       }
     },

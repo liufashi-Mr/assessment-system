@@ -164,7 +164,7 @@
           <div>
             <div>附件</div>
             <el-upload
-              action="http://localhost:3000/file/upload"
+              action="http://localhost:3001/file/upload"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove"
               :on-success="handleUpload"
@@ -385,7 +385,7 @@ export default {
   },
   methods: {
     getRoleApplyList() {
-      getApplyList({ studentId: JSON.parse(getInfo())?.studentId }).then(
+      getApplyList({ studentId: getInfo()?.studentId }).then(
         (res) => {
           this.tableData = res.data;
         }
@@ -407,9 +407,9 @@ export default {
       this.form = {
         ...this.form,
         applyId: this.detail.applyId,
-        studentId: JSON.parse(getInfo())?.studentId,
-        studentName: JSON.parse(getInfo())?.studentName,
-        studentNumber: JSON.parse(getInfo())?.studentNumber,
+        studentId: getInfo()?.studentId,
+        studentName: getInfo()?.studentName,
+        studentNumber: getInfo()?.studentNumber,
         applyDesc: this.detail.applyDesc,
       };
     },
@@ -437,7 +437,7 @@ export default {
       console.log(file);
       let fileType = file.name.split(".")[1].toUpperCase();
       if (fileType === "PNG" || fileType === "JPG" || fileType === "JPEG") {
-        this.dialogUrl = "http://localhost:3000/" + file?.response?.photoPath;
+        this.dialogUrl = "http://localhost:3001/" + file?.response?.photoPath;
         this.dialogVisible = true;
       }
     },
@@ -469,13 +469,14 @@ export default {
     },
     confirm({ rewardId, applyId, studentId }) {
       this.applyId = applyId;
-      this.drawer = true;
+      this.rewardDetail = {};
+      this.markDetail = {};
       getRewardDetail({ rewardId }).then(({ data }) => {
         this.rewardDetail = data;
       });
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
-      });
+      })
     },
     confirmSure() {
       confirmApply({
@@ -490,13 +491,12 @@ export default {
       });
     },
     studentDetail({ rewardId, studentId }) {
-      this.drawer = true;
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
       });
       getRewardDetail({ rewardId }).then(({ data }) => {
         this.rewardDetail = data;
-      });
+      }).finally(()=>{this.drawer = true;});;
     },
   },
 };

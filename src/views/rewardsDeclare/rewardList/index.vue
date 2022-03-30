@@ -187,7 +187,7 @@
         />
       </div>
       <!-- <el-upload
-          action="http://localhost:3000/upload"
+          action="http://localhost:3001/upload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove">
@@ -495,10 +495,11 @@ export default {
       this.getDataList();
     },
     getRewardDetailData(rewardId, isApply) {
-      if (!isApply) this.drawer = true;
+      this.rewardDetail = [];
       getRewardDetail({ rewardId }).then(({ data }) => {
         this.rewardDetail = data;
-      });
+        
+      }).finally(()=>{ if (!isApply) this.drawer = true;});
     },
     // 分页变化
     currentChange(currentPage) {
