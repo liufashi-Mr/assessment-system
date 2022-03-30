@@ -1,11 +1,10 @@
-import router from './router'
+import router, {resetRouter} from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
-
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
@@ -26,6 +25,7 @@ router.beforeEach(async(to, from, next) => {
       const accessRoutes = await store.dispatch('permission/generateRoutes', [
         hasToken
       ])
+      // resetRouter()
       router.addRoutes(accessRoutes)
       next()
     }

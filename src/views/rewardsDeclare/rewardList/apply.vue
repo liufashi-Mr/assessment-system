@@ -84,18 +84,20 @@ export default {
       fileList: [],
     };
   },
-  created() {
-    this.form = {
-      ...this.form,
-      rewardId: this.detail.rewardId,
-      studentId: getInfo()?.studentId,
-      studentName: getInfo()?.studentName,
-      studentNumber: getInfo()?.studentNumber,
-    };
-    console.log(this.form)
+  watch: {
+    detail() {
+      this.form = {
+        ...this.form,
+        rewardId: this.detail.rewardId,
+        studentId: JSON.parse(getInfo())?.studentId,
+        studentName: JSON.parse(getInfo())?.studentName,
+        studentNumber: JSON.parse(getInfo())?.studentNumber,
+      };
+    },
   },
   methods: {
     submitApply() {
+      console.log(this.form.rewardId);
       applyReward(this.form)
         .then((res) => {
           if (res.code === 200) {

@@ -1,6 +1,7 @@
 import { login, logout } from "@/api/user";
-import { getToken, setToken, removeToken, setInfo,getInfo } from "@/utils/auth";
+import { getToken, setToken, removeToken, setInfo,getInfo, removeInfo } from "@/utils/auth";
 import router, { resetRouter } from "@/router";
+import { remove } from "nprogress";
 
 const state = {
   token: getToken(),
@@ -40,6 +41,8 @@ const actions = {
           commit("SET_TOKEN", data[0].role);
           setToken(data[0].role);
           if (data[0].role === "student") {
+          console.log(data);
+
             setInfo(JSON.stringify({
               studentName: data[0].studentName,
               studentNumber: data[0].studentNumber,
@@ -59,8 +62,8 @@ const actions = {
     commit("SET_TOKEN", "");
     commit("SET_ROLES", []);
     removeToken();
+    removeInfo()
     resetRouter();
-
     // reset visited views and cached views
     // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
     dispatch("tagsView/delAllViews", null, { root: true });

@@ -16,8 +16,10 @@ export function removeToken() {
 export function getInfo() {
   return Cookies.get("userInfo")
 }
-
-export function setInfo(token) {
-  return Cookies.set("userInfo", token)
+export function setInfo(v) {
+  return Cookies.set("userInfo",v)
+}
+export function removeInfo(token) {
+  return Cookies.remove("userInfo")
 }
 

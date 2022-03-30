@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="page">
       <el-card class="box-card">
         <el-table
@@ -86,7 +86,7 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button
-                v-if="role === 'student'"
+                v-if="role !== 'student'"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -101,6 +101,7 @@
     </div>
     <div v-if="!page">
       <div class="bg">
+        <el-button size="mini" @click="page = true">返回</el-button>
         <div>
           <el-steps :active="1">
             <el-step
@@ -114,6 +115,105 @@
             <el-step title="步骤 3" description="这段就没那么长了"></el-step>
           </el-steps>
         </div>
+      </div>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>奖励信息</span>
+        </div>
+        <div class="text item">奖励名称：{{ rewardDetail.rewardName }}</div>
+        <div class="text item">
+          发放对象：{{
+            (getName(rewardDetail.typeId) || "全员") +
+            "/" +
+            (getName(rewardDetail.college) || "--") +
+            "/" +
+            (getName(rewardDetail.majorId) || "--")
+          }}
+        </div>
+        <div class="text item">
+          时间：{{ rewardDetail.startTime + " ~ " + rewardDetail.endTime }}
+        </div>
+        <div class="text item">描述：{{ rewardDetail.rewardDesc }}</div>
+      </el-card>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>申请信息</span>
+        </div>
+        <div class="text item">学生姓名：{{ applyDetail.studentName }}</div>
+        <div class="text item">学生学号：{{ applyDetail.studentNumber }}</div>
+        <div class="text item">
+          来自：{{
+            getName(studentDetail[0].typeId) +
+            "/" +
+            getName(studentDetail[0].collegeId) +
+            "/" +
+            getName(studentDetail[0].majorId)
+          }}
+        </div>
+        <div class="text item">申请理由：{{ applyDetail.applyDesc }}</div>
+        <div class="text item">附件：
+          <div v-for="item in applyDetail.applyAccessory" :key="item">
+            <a href=""></a>
+          </div>
+        </div>
+      </el-card>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>成绩信息</span>
+        </div>
+        <el-table
+          size="large"
+          :data="studentDetail"
+          :header-cell-style="{
+            'background-color': '#fafafa',
+            color: '#444444',
+          }"
+          empty-text="暂无数据"
+          style="
+            border: 1px solid #ebeef5;
+            width: 100%;
+            border-bottom: none;
+            font-size: 13px;
+            overflow: auto;
+          "
+        >
+          <el-table-column
+            align="center"
+            type="index"
+            :index="indexMethod"
+            label="序号"
+            width="80"
+          />
+          <el-table-column
+            width="180"
+            prop="subject"
+            header-align="center"
+            align="center"
+            label="科目"
+          />
+          <el-table-column
+            prop="mark"
+            header-align="center"
+            align="center"
+            label="分数"
+          />
+          <el-table-column
+            prop="isPass"
+            header-align="center"
+            align="center"
+            label="及格"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.isPass ? "是" : "否" }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+      <div class="footer">
+        <el-card class="box-card">
+          <el-button type="danger">驳回</el-button>
+          <el-button type="primary">通过</el-button>
+        </el-card>
       </div>
     </div>
   </div>
@@ -142,6 +242,10 @@ export default {
       tableData: [],
       flattenUniverseList: [],
       role: "",
+      applyDetail: {},
+      rewardDetail: {},
+      processDetail: {},
+      studentDetail: [],
     };
   },
   created() {
@@ -153,7 +257,7 @@ export default {
   },
   methods: {
     getRoleApplyList() {
-      getApplyList({ role: this.role }).then((res) => {
+      getApplyList({ role: getToken() }).then((res) => {
         this.tableData = res.data;
       });
     },
@@ -169,12 +273,17 @@ export default {
     async toProcess({ applyId, rewardId, rewardProcess, studentId }) {
       this.page = false;
       try {
-        const [apply, reward, flow, student] = Promise.all([
+        const [apply, reward, flow, student] = await Promise.all([
           await getApplyDetail({ applyId }),
           await getRewardDetail({ rewardId }),
           await getProcessDetail({ flowId: rewardProcess }),
           await getStudentDetail({ studentId }),
         ]);
+        console.log(apply, reward, flow, student);
+        this.applyDetail = apply.data[0];
+        this.rewardDetail = reward.data;
+        this.processDetail = flow.data[0];
+        this.studentDetail = student.data;
       } catch (error) {
         console.log(error);
       }
@@ -184,6 +293,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container {
+  padding: 20px;
+  padding-bottom: 100px;
+  position: relative;
+}
 .bg {
   padding: 20px;
   width: 100%;
@@ -192,8 +306,36 @@ export default {
   background-size: 100% 200px;
   > div {
     max-width: 900px;
-    margin: 0 auto;
-    margin-top: 50px;
+    margin: 20px auto;
   }
+}
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+.box-card {
+  margin-top: 10px;
+}
+.footer {
+  height: 60px;
+  padding: 10px;
+  right: 20px;
+  z-index: 999;
+  background-color: #fff;
+  text-align: end;
+  position: fixed;
+  bottom: 40px;
 }
 </style>

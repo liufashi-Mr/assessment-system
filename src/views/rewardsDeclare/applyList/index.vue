@@ -93,12 +93,12 @@
             <el-button
               style="margin-right: 5px"
               v-if="role === 'student'"
-              :type="!scope.row.applyStatus ? 'warning' : 'primary'"
+              :type="scope.row.applyStatus ===-1? 'warning' : 'primary'"
               size="mini"
               icon="iconfont icon-edit"
               plain
               @click="confirm(scope.row)"
-              >{{ !scope.row.applyStatus ? "去确认" : "已确认" }}</el-button
+              >{{ scope.row.applyStatus ===-1 ? "去确认" : "已确认" }}</el-button
             >
             <el-button
               style="margin-right: 5px"
@@ -365,31 +365,22 @@ export default {
         studentNumber: "",
       },
       role: "",
-      // dataRule: {
-      //   name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
-      //   age: [{ required: true, message: "年龄不能为空", trigger: "blur" }],
-      //   gender: [{ required: true, message: "性别不能为空", trigger: "blur" }],
-      //   college: [{ required: true, message: "学院不能为空", trigger: "blur" }],
-      //   applicationAwards: [
-      //     { required: true, message: "申请奖项不能为空", trigger: "blur" },
-      //   ],
-      // },
     };
   },
   created() {
-    this.getRoleApplyList();
     getUniverse().then((res) => {
       this.flattenUniverseList = res.flatData;
     });
     this.role = getToken();
+    this.getRoleApplyList();
   },
   methods: {
     getRoleApplyList() {
-      getApplyList({ studentId: getInfo()?.studentId }).then(
-        (res) => {
-          this.tableData = res.data;
-        }
-      );
+      getApplyList({
+        studentId: getInfo() ? JSON.parse(getInfo())?.studentId : null,
+      }).then((res) => {
+        this.tableData = res.data;
+      });
     },
     indexMethod(index) {
       index = index + 1;
@@ -468,15 +459,16 @@ export default {
       });
     },
     confirm({ rewardId, applyId, studentId }) {
+      this.drawer = true;
       this.applyId = applyId;
       this.rewardDetail = {};
-      this.markDetail = {};
+      this.markDetail = [];
       getRewardDetail({ rewardId }).then(({ data }) => {
         this.rewardDetail = data;
       });
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
-      })
+      });
     },
     confirmSure() {
       confirmApply({
@@ -494,9 +486,13 @@ export default {
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
       });
-      getRewardDetail({ rewardId }).then(({ data }) => {
-        this.rewardDetail = data;
-      }).finally(()=>{this.drawer = true;});;
+      getRewardDetail({ rewardId })
+        .then(({ data }) => {
+          this.rewardDetail = data;
+        })
+        .finally(() => {
+          this.drawer = true;
+        });
     },
   },
 };
