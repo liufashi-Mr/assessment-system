@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { getToken } from '@/utils/auth'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
 
@@ -17,13 +17,11 @@ export default {
       currentRole: 'adminDashboard'
     }
   },
-  computed: {
-    ...mapGetters([
-      'roles'
-    ])
+  created() {
+    this.currentRole=getToken()
   },
   created() {
-    if (!this.roles.includes('admin')) {
+    if (!this.currentRole!=='admin') {
       this.currentRole = 'editorDashboard'
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-      评优发布
+      detail
   </div>
 </template>
 

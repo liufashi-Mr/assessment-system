@@ -1,5 +1,5 @@
 <template>
-  <div>申请列表</div>
+  <div>fabu</div>
 </template>
 
 <script>
