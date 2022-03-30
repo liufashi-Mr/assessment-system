@@ -95,11 +95,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          header-align="center"
-          align="center"
-          label="领取结束时间"
-        >
+        <el-table-column header-align="center" align="center" label="状态">
           <template slot-scope="scope">
             <div>
               {{
@@ -134,6 +130,13 @@
         >
           <template slot-scope="scope">
             <el-button
+              :disabled="getStatus(
+                  new Date(scope.row.startTime).getTime(),
+                  new Date(scope.row.endTime).getTime()
+                )==='已结束'||getStatus(
+                  new Date(scope.row.startTime).getTime(),
+                  new Date(scope.row.endTime).getTime()
+                )==='未开始'"
               v-if="$store.getters.token === 'student'"
               type="primary"
               size="mini"
@@ -449,6 +452,7 @@ export default {
   },
   methods: {
     getStatus(s, e) {
+      if (!s && !e) return "不限";
       const t = Date.now();
       if (t > s && t < e) {
         return "进行中";
@@ -496,10 +500,13 @@ export default {
     },
     getRewardDetailData(rewardId, isApply) {
       this.rewardDetail = [];
-      getRewardDetail({ rewardId }).then(({ data }) => {
-        this.rewardDetail = data;
-        
-      }).finally(()=>{ if (!isApply) this.drawer = true;});
+      getRewardDetail({ rewardId })
+        .then(({ data }) => {
+          this.rewardDetail = data;
+        })
+        .finally(() => {
+          if (!isApply) this.drawer = true;
+        });
     },
     // 分页变化
     currentChange(currentPage) {

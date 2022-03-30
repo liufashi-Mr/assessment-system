@@ -93,12 +93,12 @@
             <el-button
               style="margin-right: 5px"
               v-if="role === 'student'"
-              :type="scope.row.applyStatus ===-1? 'warning' : 'primary'"
+              :type="scope.row.applyStatus === 0 ? 'warning' : 'primary'"
               size="mini"
               icon="iconfont icon-edit"
               plain
               @click="confirm(scope.row)"
-              >{{ scope.row.applyStatus ===-1 ? "去确认" : "已确认" }}</el-button
+              >{{ scope.row.applyStatus === 0 ? "去确认" : "查看" }}</el-button
             >
             <el-button
               style="margin-right: 5px"
@@ -206,15 +206,11 @@
           <div>发放对象：</div>
           <div>
             {{
-              rewardDetail.majorId ||
-              rewardDetail.collegeId ||
-              rewardDetail.typeId
-                ? getName(
-                    rewardDetail.majorId ||
-                      rewardDetail.collegeId ||
-                      rewardDetail.typeId
-                  )
-                : "全体学生"
+              (getName(rewardDetail.typeId) || "全体学生") +
+              "/" +
+              (getName(rewardDetail.college) || "--") +
+              "/" +
+              (getName(rewardDetail.majorId) || "--")
             }}
           </div>
         </div>
@@ -258,7 +254,7 @@
         <div>
           <div>
             <h3>
-              {{ this.role === "student" ? "你的信息" : "学生信息" }}
+              {{ this.role === "student" ? "你的成绩" : "学生信息" }}
             </h3>
             <el-table
               size="large"
@@ -311,7 +307,7 @@
             <br />
             <div>
               <el-button
-                v-if="role === 'student'"
+                v-if="applyStatus === 0"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -335,6 +331,7 @@ import {
   confirmApply,
   getRewardDetail,
   getStudentDetail,
+  getApplyDetail,
 } from "@/api/rewards";
 import { getUniverse } from "@/api/manage";
 import { getInfo, getToken } from "@/utils/auth";
@@ -349,6 +346,7 @@ export default {
       tableData: [],
       drawer: false,
       rewardDetail: {},
+      applyStatus: 0,
       stepNow: "",
       flattenUniverseList: [],
       detail: {},
@@ -398,9 +396,9 @@ export default {
       this.form = {
         ...this.form,
         applyId: this.detail.applyId,
-        studentId: getInfo()?.studentId,
-        studentName: getInfo()?.studentName,
-        studentNumber: getInfo()?.studentNumber,
+        studentId: JSON.parse(getInfo())?.studentId,
+        studentName:  JSON.parse(getInfo())?.studentName,
+        studentNumber:  JSON.parse(getInfo())?.studentNumber,
         applyDesc: this.detail.applyDesc,
       };
     },
@@ -425,7 +423,6 @@ export default {
       );
     },
     handlePictureCardPreview(file) {
-      console.log(file);
       let fileType = file.name.split(".")[1].toUpperCase();
       if (fileType === "PNG" || fileType === "JPG" || fileType === "JPEG") {
         this.dialogUrl = "http://localhost:3001/" + file?.response?.photoPath;
@@ -459,10 +456,13 @@ export default {
       });
     },
     confirm({ rewardId, applyId, studentId }) {
-      this.drawer = true;
       this.applyId = applyId;
       this.rewardDetail = {};
       this.markDetail = [];
+      this.drawer = true;
+      getApplyDetail({ applyId }).then(({ data }) => {
+        this.applyStatus = data[0]?.applyStatus;
+      });
       getRewardDetail({ rewardId }).then(({ data }) => {
         this.rewardDetail = data;
       });

@@ -128,8 +128,8 @@ export default {
       );
     },
     beforeUpload(file) {
-      console.log(123);
-      let fileType = file.name.split(".")[1].toUpperCase();
+      const fileType = file.name.split(".")[file.name.split(".").length-1].toUpperCase();
+      console.log(fileType)
       if (
         !["PDF", "DOCX", "PNG", "JPG", "JPEG", "DOC", "XLSX", "CSV"].includes(
           fileType

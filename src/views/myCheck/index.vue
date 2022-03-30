@@ -50,7 +50,7 @@
             label="学科"
           >
             <template slot-scope="scope">
-              {{ getName(scope.row.typeId) }}
+              {{ getName(scope.row.typeId) || "不限" }}
             </template>
           </el-table-column>
           <el-table-column
@@ -59,7 +59,7 @@
             align="center"
             label="学院"
             ><template slot-scope="scope">
-              {{ getName(scope.row.collegeId) }}
+              {{ getName(scope.row.collegeId) || "不限" }}
             </template></el-table-column
           >
           <el-table-column
@@ -68,7 +68,7 @@
             align="center"
             label="专业"
             ><template slot-scope="scope">
-              {{ getName(scope.row.majorId) }}
+              {{ getName(scope.row.majorId) || "不限" }}
             </template></el-table-column
           >
           <el-table-column
@@ -123,7 +123,7 @@
         <div class="text item">奖励名称：{{ rewardDetail.rewardName }}</div>
         <div class="text item">
           发放对象：{{
-            (getName(rewardDetail.typeId) || "全员") +
+            (getName(rewardDetail.typeId) || "全体学生") +
             "/" +
             (getName(rewardDetail.college) || "--") +
             "/" +
@@ -151,9 +151,19 @@
           }}
         </div>
         <div class="text item">申请理由：{{ applyDetail.applyDesc }}</div>
-        <div class="text item">附件：
-          <div v-for="item in applyDetail.applyAccessory" :key="item">
-            <a href=""></a>
+        <div class="text item" style="display: flex">
+          <div>附件：</div>
+          <div>
+            <div
+              v-for="item in JSON.parse(applyDetail.applyAccessory)"
+              :key="item"
+            >
+              <el-link type="primary">
+                <a target="_blank" :href="'http://localhost:3001' + item"
+                  >{{ item }} 查看</a
+                ></el-link
+              >
+            </div>
           </div>
         </div>
       </el-card>
@@ -211,8 +221,8 @@
       </el-card>
       <div class="footer">
         <el-card class="box-card">
-          <el-button type="danger">驳回</el-button>
-          <el-button type="primary">通过</el-button>
+          <el-button type="danger" @click="check(0)">驳回</el-button>
+          <el-button type="primary" @click="check(1)">通过</el-button>
         </el-card>
       </div>
     </div>
@@ -242,10 +252,10 @@ export default {
       tableData: [],
       flattenUniverseList: [],
       role: "",
-      applyDetail: {},
+      applyDetail: { applyAccessory: "[]" },
       rewardDetail: {},
       processDetail: {},
-      studentDetail: [],
+      studentDetail: [{}],
     };
   },
   created() {
@@ -256,6 +266,13 @@ export default {
     this.role = getToken();
   },
   methods: {
+    check(val) {
+      console.log({
+        isPass: val,
+        currentStep: this.applyDetail.applyStep,
+        nextStep: this.getNextStep(this.applyDetail.applyStep),
+      });
+    },
     getRoleApplyList() {
       getApplyList({ role: getToken() }).then((res) => {
         this.tableData = res.data;
@@ -266,6 +283,7 @@ export default {
       return index;
     },
     getName(id) {
+      if (!id) return;
       return this.flattenUniverseList[
         this.flattenUniverseList.findIndex((item) => item.id === id)
       ]?.name;
@@ -287,6 +305,33 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    getNextStep(current) {
+      console.log(current);
+      let res = "";
+      Object.keys(this.processDetail).forEach((item, index) => {
+        if (this.processDetail[item] === current) {
+          switch (item) {
+            case "stepOne": {
+              res = this.processDetail["stepTwo"]||"完成";
+              return;
+            };
+            case "stepTwo": {
+              res = this.processDetail["stepThree"]||"完成";
+              return;
+            };
+            case "stepThree": {
+              res = this.processDetail["stepFour"]||"完成";
+              return;
+            };
+            case "stepFour": {
+              res = this.processDetail["stepFive"]||"完成";
+              return;
+            };
+          }
+        }
+      });
+      return res;
     },
   },
 };
