@@ -213,17 +213,17 @@ export const asyncRoutes = [
           roles: ["admin", "office"],
         },
       },
-      {
-        path: "total",
-        component: () => import("@/views/processManage/total"),
-        name: "Total",
-        meta: {
-          title: "汇总统计",
-          icon: "el-icon-s-data",
-          noCache: true,
-          roles: ["admin","office"],
-        },
-      },
+      // {
+      //   path: "total",
+      //   component: () => import("@/views/processManage/total"),
+      //   name: "Total",
+      //   meta: {
+      //     title: "汇总统计",
+      //     icon: "el-icon-s-data",
+      //     noCache: true,
+      //     roles: ["admin","office"],
+      //   },
+      // },
       // {
       //   path: "informationInout",
       //   component: () => import("@/views/processManage/informationInout"),
@@ -267,13 +267,13 @@ export const asyncRoutes = [
     children: [
       {
         path: "index",
-        component: () => import("@/views/result/index"),
+        component: () =>  import("@/views/processManage/total"),
         name: "Result",
         meta: {
-          title: "结果公布",
+          title: "结果公布与导出",
           icon: "guide",
           noCache: true,
-          roles: ["office"],
+          roles: ["admin","office"],
         },
       },
     ],
