@@ -58,13 +58,13 @@
             </el-form>
           </el-card>
           <el-card class="box-card">
-            <div style="margin-bottom: 10px;display:flex">
+            <div style="margin-bottom: 10px; display: flex">
               <el-button
                 type="primary"
                 size="small"
                 icon="iconfont icon-Add"
                 @click="addOrUpdateHandle(0)"
-                style="margin-right:10px"
+                style="margin-right: 10px"
                 >新增</el-button
               >
               <el-upload
@@ -174,14 +174,27 @@
               </el-table-column>
               <el-table-column align="center" label="操作" width="180">
                 <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    icon="iconfont icon-edit"
-                    plain
-                    @click="addOrUpdateHandle(scope.row)"
-                    >编辑</el-button
-                  >
+                  <div style="display: flex">
+                    <el-button
+                      type="primary"
+                      style="margin-right: 8px"
+                      size="mini"
+                      icon="iconfont icon-edit"
+                      plain
+                      @click="addOrUpdateHandle(scope.row)"
+                      >编辑</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      style="margin-right: 8px"
+                      size="mini"
+                      icon="iconfont icon-edit"
+                      plain
+                      @click="getSubjectList(scope.row.id)"
+                    >
+                      查看成绩
+                    </el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -400,6 +413,87 @@
         >
       </span>
     </el-dialog>
+    <el-drawer
+      size="800px"
+      title="查看成绩"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose"
+    >
+      <div class="drawer">
+        <el-table
+          size="large"
+          :data="markDetail"
+          :header-cell-style="{
+            'background-color': '#fafafa',
+            color: '#444444',
+          }"
+          empty-text="暂无数据"
+          style="
+            border: 1px solid #ebeef5;
+            width: 100%;
+            border-bottom: none;
+            font-size: 13px;
+            overflow: auto;
+            margin-bottom: 20px;
+          "
+        >
+          <el-table-column
+            width="180"
+            prop="subject"
+            header-align="center"
+            align="center"
+            label="科目"
+          />
+          <el-table-column
+            prop="mark"
+            header-align="center"
+            align="center"
+            label="分数"
+          />
+          <el-table-column
+            prop="isPass"
+            header-align="center"
+            align="center"
+            label="及格"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.isPass ? "是" : "否" }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-upload
+          v-if="!markDetail.length"
+          action=""
+          :auto-upload="false"
+          style="margin-right: 8px"
+          :show-file-list="false"
+          :on-change="importGrade"
+        >
+          <el-button
+            size="small"
+            type="primary"
+            @click="getStudentId(scope.row)"
+            >导入成绩</el-button
+          >
+        </el-upload>
+        <el-upload
+          v-if="markDetail.length"
+          action=""
+          :auto-upload="false"
+          style="margin-right: 8px"
+          :show-file-list="false"
+          :on-change="importGrade"
+        >
+          <el-button
+            size="small"
+            type="primary"
+            @click="getStudentId(scope.row)"
+            >重新导入</el-button
+          >
+        </el-upload>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -409,6 +503,8 @@ import {
   addUniverse,
   getStudent,
   updateStudent,
+  addGrade,
+  getGrade,
   addStudent,
 } from "@/api/manage";
 const initSearchData = {
@@ -425,6 +521,8 @@ export default {
   name: "UserManage",
   data() {
     return {
+      drawer: false,
+      markDetail: [],
       loading: false,
       activeName: "student",
       universeList: [],
@@ -444,6 +542,8 @@ export default {
         sex: "",
         grade: "",
       },
+      studentId: "",
+
       total: 0,
       tableData: [],
       multipleSelection: [],
@@ -481,10 +581,14 @@ export default {
     });
   },
   methods: {
+    indexMethod(index) {
+      index = index + 1;
+      return index;
+    },
     // 搜索
     onSearch() {
-      this.formSearch.currentPage=1;
-      this.formSearch.pageSize=10;
+      this.formSearch.currentPage = 1;
+      this.formSearch.pageSize = 10;
       const searchParams = { ...this.formSearch };
       if (searchParams?.studentValue?.length) {
         searchParams.typeId = searchParams.studentValue[0];
@@ -536,13 +640,68 @@ export default {
                     .then((res) => {
                       if (res.code === 200) {
                         this.$message.success(`第${index + 1}个添加成功!`);
-                        this.getStudentList(this.formSearch)
+                        this.getStudentList(this.formSearch);
                       }
                     })
                     .catch((err) => {
                       console.log(err);
                     });
                 });
+              } catch (error) {
+                console.log(error);
+                this.$message.error(error);
+              }
+            }
+          });
+        } catch (e) {}
+      };
+    },
+    getSubjectList(studentId) {
+      this.drawer = true;
+      this.studentId = studentId;
+      getGrade({ studentId }).then(({ data }) => {
+        this.markDetail = data || [];
+      });
+    },
+    getStudentId({ id }) {
+      this.studentId = id;
+    },
+    importGrade(file, fileList, e) {
+      console.log(file, fileList, e);
+      const fileReader = new FileReader();
+      fileReader.readAsBinaryString(file.raw);
+      fileReader.onload = (event) => {
+        try {
+          new Promise((resolve) => {
+            const data = event.target.result;
+            const infor = this.XLSX.read(data, { type: "binary" });
+            let sheet = Object.keys(infor.Sheets)[0];
+            const arr = this.XLSX.utils.sheet_to_json(infor.Sheets[sheet]); //第一列为键名的数组对象
+            resolve(arr);
+          }).then((arr) => {
+            if (arr.length) {
+              try {
+                arr.forEach((item, index) => {
+                  console.log(item);
+                  const params = {};
+                  params.subject = item["科目"];
+                  params.mark = item["成绩"];
+                  params.studentId = this.studentId;
+                  params.isPass = item["成绩"] >= 60 ? 1 : 0;
+                  addGrade(params)
+                    .then((res) => {
+                      if (res.code === 200) {
+                        this.$message.success(`第${index + 1}科添加成功!`);
+                        this.getStudentList(this.formSearch);
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                });
+                setTimeout(()=>{
+                  this.getSubjectList(this.studentId)
+                },1500)
               } catch (error) {
                 console.log(error);
                 this.$message.error(error);
@@ -697,5 +856,8 @@ export default {
 }
 .search-card {
   margin-bottom: 16px;
+}
+.drawer {
+  padding: 0 24px;
 }
 </style>

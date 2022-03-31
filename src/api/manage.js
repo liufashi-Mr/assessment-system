@@ -28,6 +28,20 @@ export function addStudent(data) {
     data,
   });
 }
+export function addGrade(data) {
+  return request({
+    url: "/student/addGrade",
+    method: "post",
+    data,
+  });
+}
+export function getGrade(data) {
+  return request({
+    url: "/student/getGrade",
+    method: "post",
+    data,
+  });
+}
 export function updateStudent(data) {
   return request({
     url: "/student/updateStudent",

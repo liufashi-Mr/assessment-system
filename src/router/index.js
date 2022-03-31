@@ -104,14 +104,14 @@ export const asyncRoutes = [
     redirect:"/rewardsDeclare/rewardList",
     component: Layout,
     alwaysShow: true,
-    meta: { title: "评奖系统", icon: "el-icon-medal", noCache: true },
+    meta: { title: "评优评奖系统", icon: "el-icon-medal", noCache: true },
     children: [
       {
         path: "rewardList",
         component: () => import("@/views/rewardsDeclare/rewardList"),
         name: "RewardList",
         meta: {
-          title: "奖励概览",
+          title: "概览",
           icon: "education",
           noCache: true,
           roles: [
