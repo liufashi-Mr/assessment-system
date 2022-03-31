@@ -92,3 +92,17 @@ export function getProcessDetail(data) {
     data,
   });
 }
+export function getRewardResult(data) {
+  return request({
+    url: "/activity/getRewardResult",
+    method: "post",
+    data,
+  });
+}
+export function getAllRewardResult(data) {
+  return request({
+    url: "/activity/getAllRewardResult",
+    method: "post",
+    data,
+  });
+}

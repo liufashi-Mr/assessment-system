@@ -79,7 +79,7 @@
           align="center"
           label="申请理由"
         />
-        <el-table-column align="center" label="操作" width="280">
+        <el-table-column align="center" label="操作" width="300">
           <template slot-scope="scope">
             <el-button
               v-if="role === 'student'"
@@ -92,17 +92,50 @@
             >
             <el-button
               style="margin-right: 5px"
-              v-if="role === 'student'"
-              :type="scope.row.applyStatus === 0 ? 'warning' : 'primary'"
+              v-if="role === 'student' && scope.row.applyStatus === -1"
+              type="warning"
               size="mini"
               icon="iconfont icon-edit"
               plain
               @click="confirm(scope.row)"
-              >{{ scope.row.applyStatus === 0 ? "去确认" : "查看" }}</el-button
+              >去确认</el-button
             >
             <el-button
               style="margin-right: 5px"
-              v-if="role !== 'student'"
+              v-if="role === 'student' && scope.row.applyStatus === 0"
+              type="danger"
+              size="mini"
+              icon="iconfont icon-edit"
+              plain
+              @click="confirm(scope.row)"
+              >未通过</el-button
+            >
+            <el-button
+              style="margin-right: 5px"
+              v-if="scope.row.applyStatus === 1"
+              type="primary"
+              size="mini"
+              icon="iconfont icon-edit"
+              plain
+              >审核中</el-button
+            >
+            <el-button
+              style="margin-right: 5px"
+              v-if="role === 'student' && scope.row.applyStatus === 2"
+              type="success"
+              size="mini"
+              icon="iconfont icon-edit"
+              plain
+              @click="confirm(scope.row)"
+              >已通过</el-button
+            >
+            <el-button
+              style="margin-right: 5px"
+              v-if="
+                role !== 'student' ||
+                (role === 'student' &&
+                  (scope.row.applyStatus === 2 || scope.row.applyStatus === 1))
+              "
               type="primary"
               size="mini"
               icon="iconfont icon-edit"
@@ -115,7 +148,7 @@
               @onConfirm="deleteHandle(scope.row.applyId)"
             >
               <el-button
-                v-if="role === 'student'"
+                v-if="role === 'student'&&scope.row.applyStatus !== 2"
                 type="danger"
                 size="mini"
                 plain
@@ -307,13 +340,22 @@
             <br />
             <div>
               <el-button
-                v-if="applyStatus === 0"
+                v-if="applyStatus === -1"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
                 plain
                 @click="confirmSure()"
                 >确定申请</el-button
+              >
+              <el-button
+                v-if="applyStatus === 0"
+                type="primary"
+                size="mini"
+                icon="iconfont icon-edit"
+                plain
+                @click="confirmSure()"
+                >重新提交</el-button
               >
             </div>
           </div>
@@ -397,8 +439,8 @@ export default {
         ...this.form,
         applyId: this.detail.applyId,
         studentId: JSON.parse(getInfo())?.studentId,
-        studentName:  JSON.parse(getInfo())?.studentName,
-        studentNumber:  JSON.parse(getInfo())?.studentNumber,
+        studentName: JSON.parse(getInfo())?.studentName,
+        studentNumber: JSON.parse(getInfo())?.studentNumber,
         applyDesc: this.detail.applyDesc,
       };
     },

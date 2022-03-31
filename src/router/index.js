@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import { getToken } from "@/utils/auth";
 Vue.use(Router);
 
 /* Layout */
@@ -39,17 +38,6 @@ import Layout from "@/layout";
  * all roles can be accessed
  */
 export const constantRoutes = [
-  // {
-  //   path: "/redirect",
-  //   component: Layout,
-  //   hidden: true,
-  //   children: [
-  //     {
-  //       path: "/redirect/:path(.*)",
-  //       component: () => import("@/views/redirect/index"),
-  //     },
-  //   ],
-  // },
   {
     path: "/login",
     component: () => import("@/views/login/index"),
@@ -87,7 +75,6 @@ export const constantRoutes = [
       },
     ],
   },
-
 ];
 
 /**
@@ -234,20 +221,20 @@ export const asyncRoutes = [
           title: "汇总统计",
           icon: "el-icon-s-data",
           noCache: true,
-          roles: ["admin"],
+          roles: ["admin","office"],
         },
       },
-      {
-        path: "informationInout",
-        component: () => import("@/views/processManage/informationInout"),
-        name: "InformationInout",
-        meta: {
-          title: "信息导入导出",
-          icon: "excel",
-          noCache: true,
-          roles: ["admin"],
-        },
-      },
+      // {
+      //   path: "informationInout",
+      //   component: () => import("@/views/processManage/informationInout"),
+      //   name: "InformationInout",
+      //   meta: {
+      //     title: "信息导入导出",
+      //     icon: "excel",
+      //     noCache: true,
+      //     roles: ["admin","office"],
+      //   },
+      // },
     ],
   },
   {

@@ -14,3 +14,10 @@ export function getProcess(data) {
     data,
   });
 }
+export function auditProcess(data) {
+  return request({
+    url: "/process/auditProcess",
+    method: "post",
+    data,
+  });
+}

@@ -85,14 +85,36 @@
           />
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
+              <el-tag v-if="scope.row.applyStatus === 0" type="danger">
+                已驳回
+              </el-tag>
+              <el-tag v-if="scope.row.applyStatus === 1" type="primary">
+                审核中
+              </el-tag>
+              <el-tag v-if="scope.row.applyStatus === 2" type="success">
+                已通过
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="操作">
+            <template slot-scope="scope">
               <el-button
-                v-if="role !== 'student'"
+                v-if="role !== 'student'&&scope.row.applyStatus !== 2"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
                 plain
                 @click="toProcess(scope.row)"
                 >去审核</el-button
+              >
+              <el-button
+                v-if="role !== 'student'&&scope.row.applyStatus === 2"
+                type="primary"
+                size="mini"
+                icon="iconfont icon-edit"
+                plain
+                @click="toProcess(scope.row)"
+                >查看</el-button
               >
             </template>
           </el-table-column>
@@ -103,16 +125,29 @@
       <div class="bg">
         <el-button size="mini" @click="page = true">返回</el-button>
         <div>
-          <el-steps :active="1">
+          <el-steps
+            :active="+getActiveStep(applyDetail && applyDetail.applyStep)"
+          >
             <el-step
-              title="步骤 1"
-              description="这是一段很长很长很长的描述性文字"
+              v-if="processDetail.stepOne"
+              :title="processDetail.stepOne"
             ></el-step>
             <el-step
-              title="步骤 2"
-              description="这是一段很长很长很长的描述性文字"
+              v-if="processDetail.stepTwo"
+              :title="processDetail.stepTwo"
             ></el-step>
-            <el-step title="步骤 3" description="这段就没那么长了"></el-step>
+            <el-step
+              v-if="processDetail.stepThree"
+              :title="processDetail.stepThree"
+            ></el-step>
+            <el-step
+              v-if="processDetail.stepFour"
+              :title="processDetail.stepFour"
+            ></el-step>
+            <el-step
+              v-if="processDetail.stepFive"
+              :title="processDetail.stepFive"
+            ></el-step>
           </el-steps>
         </div>
       </div>
@@ -158,11 +193,11 @@
               v-for="item in JSON.parse(applyDetail.applyAccessory)"
               :key="item"
             >
-              <el-link type="primary">
+              <el-link type="primary" @click="filePreview(item)">
                 <a target="_blank" :href="'http://localhost:3001' + item"
                   >{{ item }} 查看</a
-                ></el-link
-              >
+                >
+              </el-link>
             </div>
           </div>
         </div>
@@ -219,10 +254,10 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <div class="footer">
+      <div class="footer" v-if="applyDetail.applyStatus!==2">
         <el-card class="box-card">
           <el-button type="danger" @click="check(0)">驳回</el-button>
-          <el-button type="primary" @click="check(1)">通过</el-button>
+          <el-button type="primary" @click="check(2)">通过</el-button>
         </el-card>
       </div>
     </div>
@@ -231,15 +266,13 @@
 
 <script>
 import {
-  cancelApply,
   getApplyList,
-  updateApply,
   getApplyDetail,
-  confirmApply,
   getRewardDetail,
   getStudentDetail,
   getProcessDetail,
 } from "@/api/rewards";
+import { auditProcess } from "@/api/process";
 import { getUniverse } from "@/api/manage";
 import { getToken } from "@/utils/auth";
 export default {
@@ -267,11 +300,30 @@ export default {
   },
   methods: {
     check(val) {
-      console.log({
-        isPass: val,
-        currentStep: this.applyDetail.applyStep,
-        nextStep: this.getNextStep(this.applyDetail.applyStep),
-      });
+      this.$confirm(`点击确定将${val ? "通过" : "驳回"}该申请`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          auditProcess({
+            isPass: val,
+            applyId: this.applyDetail.id,
+            nextStep: this.getNextStep(this.applyDetail.applyStep),
+          }).then((res) => {
+            if (res.code === 200) {
+              this.$message.success(val ? "审核已通过" : "审核已驳回");
+              this.getRoleApplyList();
+              this.page = true;
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作",
+          });
+        });
     },
     getRoleApplyList() {
       getApplyList({ role: getToken() }).then((res) => {
@@ -306,6 +358,21 @@ export default {
         console.log(error);
       }
     },
+    filePreview(file) {
+      // const fileType = file
+      //   .split(".")
+      //   [file.split(".").length - 1].toUpperCase();
+      // if (["DOCX", "XLSX", "DOC", "CSV"].includes(fileType)) {
+      // window.open(
+      //   `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(
+      //     "http://localhost:3001/" + file
+      //   )}`,
+      //   "_blank"
+      // );
+      // } else {
+      window.open(`http://localhost:3001/${file}`, "_blank");
+      // }
+    },
     getNextStep(current) {
       console.log(current);
       let res = "";
@@ -313,21 +380,51 @@ export default {
         if (this.processDetail[item] === current) {
           switch (item) {
             case "stepOne": {
-              res = this.processDetail["stepTwo"]||"完成";
+              res = this.processDetail["stepTwo"] || "完成";
               return;
-            };
+            }
             case "stepTwo": {
-              res = this.processDetail["stepThree"]||"完成";
+              res = this.processDetail["stepThree"] || "完成";
               return;
-            };
+            }
             case "stepThree": {
-              res = this.processDetail["stepFour"]||"完成";
+              res = this.processDetail["stepFour"] || "完成";
               return;
-            };
+            }
             case "stepFour": {
-              res = this.processDetail["stepFive"]||"完成";
+              res = this.processDetail["stepFive"] || "完成";
               return;
-            };
+            }
+          }
+        }
+      });
+      return res;
+    },
+    getActiveStep(current) {
+      let res = "";
+      Object.keys(this.processDetail).forEach((item, index) => {
+        if (this.processDetail[item] === current) {
+          switch (item) {
+            case "stepOne": {
+              res = 0;
+              return;
+            }
+            case "stepTwo": {
+              res = 1;
+              return;
+            }
+            case "stepThree": {
+              res = 2;
+              return;
+            }
+            case "stepFour": {
+              res = 3;
+              return;
+            }
+            default: {
+              res = 4;
+              return;
+            }
           }
         }
       });
