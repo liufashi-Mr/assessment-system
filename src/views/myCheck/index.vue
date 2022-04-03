@@ -402,6 +402,7 @@ export default {
     },
     getActiveStep(current) {
       let res = "";
+      if(current==="完成")return 5
       Object.keys(this.processDetail).forEach((item, index) => {
         if (this.processDetail[item] === current) {
           switch (item) {
