@@ -3,11 +3,11 @@
     <div class="btn">
       <download-excel
         class="export-btn"
-        :data="tableData || []"
+        :data="allResult || []"
         :fields="jsonFields"
         type="xls"
-        header="数据报表"
-        name="数据报表.xls"
+        header="全部数据报表"
+        name="全部报表.xls"
       >
         <el-button type="success"> 全部导出 </el-button>
       </download-excel>
@@ -202,7 +202,7 @@ export default {
       },
       审核状态: {
         field: "applyStatus",
-        callback: (value) => getStatus(value),
+        callback: (value) => this.getStatus(value),
       },
     };
     this.getRewardList();
