@@ -75,6 +75,13 @@
               >
                 <el-button size="small" type="primary">导入Excel</el-button>
               </el-upload>
+              <el-link
+                style="margin-left: 10px"
+                href="http://localhost:3001/uploads/template/studentInfo.xlsx"
+                type="primary"
+              >
+                下载模板
+              </el-link>
             </div>
             <el-table
               size="medium"
@@ -699,9 +706,9 @@ export default {
                       console.log(err);
                     });
                 });
-                setTimeout(()=>{
-                  this.getSubjectList(this.studentId)
-                },1500)
+                setTimeout(() => {
+                  this.getSubjectList(this.studentId);
+                }, 1500);
               } catch (error) {
                 console.log(error);
                 this.$message.error(error);

@@ -14,7 +14,10 @@
         <!-- <search id="header-search" class="right-menu-item" /> -->
 
         <error-log class="errLog-container right-menu-item hover-effect" />
-        <el-tooltip content="审批消息" v-if="role !== 'student'">
+        <el-tooltip
+          content="审批消息"
+          v-if="role !== 'student' && role !== 'admin' && role !== 'office'"
+        >
           <div class="bell" @click="$router.push('/myCheck/index')">
             <i class="el-icon-bell"></i>
             <span>{{ count }}</span>
@@ -33,7 +36,7 @@
         trigger="click"
       >
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
+          <img src="@/assets/avatar.jpg" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -87,17 +90,19 @@ export default {
       this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
     getMessageCount() {
-      getApplyList({ role: getToken() }).then(({ data }) => {
-        this.count = data.length;
-      });
+      if (
+        this.role !== "student" &&
+        this.role !== "admin" &&
+        this.role !== "office"
+      )
+        getApplyList({ role: getToken() }).then(({ data }) => {
+          this.count = data.length;
+        });
     },
   },
   created() {
     this.role = getToken();
     this.getMessageCount();
-    // setInterval(() => {
-    //   this.getMessageCount();
-    // }, 3000);
   },
   watch: {
     count() {

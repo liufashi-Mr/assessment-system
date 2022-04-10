@@ -108,7 +108,17 @@
               icon="iconfont icon-edit"
               plain
               @click="confirm(scope.row)"
-              >未通过</el-button
+              >已驳回</el-button
+            >
+             <el-button
+              style="margin-right: 5px"
+              v-if="role === 'student' && scope.row.applyStatus ===-2"
+              type="danger"
+              size="mini"
+              icon="iconfont icon-edit"
+              plain
+              @click="$message.error('很抱歉你不符合条件')"
+              >不通过</el-button
             >
             <el-button
               style="margin-right: 5px"

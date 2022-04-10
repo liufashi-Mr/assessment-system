@@ -42,6 +42,20 @@ export function getGrade(data) {
     data,
   });
 }
+export function getStudentInfo(data) {
+  return request({
+    url: "/student/getStudentInfo",
+    method: "post",
+    data,
+  });
+}
+export function updateStudentInfo(data) {
+  return request({
+    url: "/student/updateStudentInfo",
+    method: "post",
+    data,
+  });
+}
 export function updateStudent(data) {
   return request({
     url: "/student/updateStudent",

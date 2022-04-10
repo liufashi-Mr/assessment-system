@@ -5,25 +5,25 @@
 </template>
 
 <script>
-import { getToken } from '@/utils/auth'
-import adminDashboard from './admin'
-import editorDashboard from './editor'
+import { getToken } from "@/utils/auth";
+import adminDashboard from "./admin";
+import editorDashboard from "./editor";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: { adminDashboard, editorDashboard },
   data() {
     return {
-      currentRole: 'adminDashboard'
-    }
+      currentRole: "adminDashboard",
+    };
   },
   created() {
-    this.currentRole=getToken()
+    this.currentRole = getToken();
   },
   created() {
-    if (!this.currentRole!=='admin') {
-      this.currentRole = 'editorDashboard'
+    if (!this.currentRole !== "admin") {
+      this.currentRole = "editorDashboard";
     }
-  }
-}
+  },
+};
 </script>

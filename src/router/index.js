@@ -83,6 +83,23 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: "/personalInfo",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/personalInfo/index"),
+        name: "allCheck",
+        meta: {
+          title: "个人信息",
+          icon: "user",
+          noCache: true,
+          roles: ["student"],
+        },
+      },
+    ],
+  },
+  {
     path: "/userManage",
     component: Layout,
     children: [
@@ -101,7 +118,7 @@ export const asyncRoutes = [
   },
   {
     path: "/rewardsDeclare",
-    redirect:"/rewardsDeclare/rewardList",
+    redirect: "/rewardsDeclare/rewardList",
     component: Layout,
     alwaysShow: true,
     meta: { title: "评优评奖系统", icon: "el-icon-medal", noCache: true },
@@ -249,14 +266,41 @@ export const asyncRoutes = [
           title: "我的审核",
           icon: "tree-table",
           noCache: true,
-          roles: [
-            "admin",
-            "office",
-            "teacher",
-            "college",
-            "xuegongchu",
-            "xiaofenguan",
-          ],
+          roles: ["teacher", "college", "xuegongchu", "xiaofenguan"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/allCheck",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/allCheck/index"),
+        name: "allCheck",
+        meta: {
+          title: "所有审核",
+          icon: "tree-table",
+          noCache: true,
+          roles: ["admin", "office"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/myApply",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/myApply/index"),
+        name: "myApply",
+        meta: {
+          title: "我的申请",
+          icon: "tree-table",
+          noCache: true,
+          roles: ["student"],
         },
       },
     ],
@@ -267,13 +311,13 @@ export const asyncRoutes = [
     children: [
       {
         path: "index",
-        component: () =>  import("@/views/processManage/total"),
+        component: () => import("@/views/processManage/total"),
         name: "Result",
         meta: {
           title: "结果公布与导出",
           icon: "guide",
           noCache: true,
-          roles: ["admin","office"],
+          roles: ["admin", "office"],
         },
       },
     ],
@@ -290,7 +334,7 @@ const createRouter = () =>
 
 const router = createRouter();
 
-router.addRoutes([...asyncRoutes])
+router.addRoutes([...asyncRoutes]);
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter();

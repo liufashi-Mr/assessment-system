@@ -83,7 +83,7 @@
             align="center"
             label="申请理由"
           />
-          <el-table-column align="center" label="操作">
+          <el-table-column align="center" label="状态">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.applyStatus === -2" type="danger">
                 不通过
@@ -102,20 +102,6 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button
-                v-if="
-                  role !== 'student' &&
-                  scope.row.applyStatus !== 2 &&
-                  scope.row.applyStatus !== -2
-                "
-                type="primary"
-                size="mini"
-                icon="iconfont icon-edit"
-                plain
-                @click="toProcess(scope.row)"
-                >去审核</el-button
-              >
-              <el-button
-                v-if="role !== 'student' && (scope.row.applyStatus === 2)"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -261,13 +247,6 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <div class="footer" v-if="applyDetail.applyStatus !== 2">
-        <el-card class="box-card">
-          <el-button type="danger" @click="check(3)">不通过</el-button>
-          <el-button type="warning" @click="check(0)">驳回</el-button>
-          <el-button type="primary" @click="check(2)">通过</el-button>
-        </el-card>
-      </div>
     </div>
   </div>
 </template>
@@ -282,7 +261,7 @@ import {
 } from "@/api/rewards";
 import { auditProcess } from "@/api/process";
 import { getUniverse } from "@/api/manage";
-import { getToken } from "@/utils/auth";
+import { getToken, getInfo } from "@/utils/auth";
 export default {
   components: {
     apply: () => import("./apply.vue"),
@@ -307,38 +286,12 @@ export default {
     this.role = getToken();
   },
   methods: {
-    check(val) {
-      this.$confirm(`点击确定将提交审核结果该申请`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          auditProcess({
-            isPass: val,
-            applyId: this.applyDetail.id,
-            nextStep: this.getNextStep(this.applyDetail.applyStep),
-          }).then((res) => {
-            if (res.code === 200) {
-              this.$message.success(
-                val == 1 ? "审核已通过" : "审核不通过或驳回"
-              );
-              this.getRoleApplyList();
-              this.page = true;
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消操作",
-          });
-        });
-    },
     getRoleApplyList() {
-      getApplyList({ role: getToken() }).then((res) => {
-        this.tableData = res.data;
-      });
+      getApplyList({ studentId: JSON.parse(getInfo()).studentId }).then(
+        (res) => {
+          this.tableData = res.data;
+        }
+      );
     },
     indexMethod(index) {
       index = index + 1;

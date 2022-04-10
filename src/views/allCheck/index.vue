@@ -85,7 +85,7 @@
           />
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.applyStatus === -2" type="danger">
+               <el-tag v-if="scope.row.applyStatus === -2" type="danger">
                 不通过
               </el-tag>
               <el-tag v-if="scope.row.applyStatus === 0" type="danger">
@@ -102,20 +102,7 @@
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button
-                v-if="
-                  role !== 'student' &&
-                  scope.row.applyStatus !== 2 &&
-                  scope.row.applyStatus !== -2
-                "
-                type="primary"
-                size="mini"
-                icon="iconfont icon-edit"
-                plain
-                @click="toProcess(scope.row)"
-                >去审核</el-button
-              >
-              <el-button
-                v-if="role !== 'student' && (scope.row.applyStatus === 2)"
+                v-if="role !== 'student'&&scope.row.applyStatus === 2"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -261,10 +248,9 @@
           </el-table-column>
         </el-table>
       </el-card>
-      <div class="footer" v-if="applyDetail.applyStatus !== 2">
+      <div class="footer" v-if="applyDetail.applyStatus!==2">
         <el-card class="box-card">
-          <el-button type="danger" @click="check(3)">不通过</el-button>
-          <el-button type="warning" @click="check(0)">驳回</el-button>
+          <el-button type="danger" @click="check(0)">驳回</el-button>
           <el-button type="primary" @click="check(2)">通过</el-button>
         </el-card>
       </div>
@@ -308,7 +294,7 @@ export default {
   },
   methods: {
     check(val) {
-      this.$confirm(`点击确定将提交审核结果该申请`, "提示", {
+      this.$confirm(`点击确定将${val ? "通过" : "驳回"}该申请`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -320,9 +306,7 @@ export default {
             nextStep: this.getNextStep(this.applyDetail.applyStep),
           }).then((res) => {
             if (res.code === 200) {
-              this.$message.success(
-                val == 1 ? "审核已通过" : "审核不通过或驳回"
-              );
+              this.$message.success(val ? "审核已通过" : "审核已驳回");
               this.getRoleApplyList();
               this.page = true;
             }
@@ -412,7 +396,7 @@ export default {
     },
     getActiveStep(current) {
       let res = "";
-      if (current === "完成") return 5;
+      if(current==="完成")return 5
       Object.keys(this.processDetail).forEach((item, index) => {
         if (this.processDetail[item] === current) {
           switch (item) {
