@@ -18,7 +18,7 @@
         </el-card>
         <!--下面信息框-->
         <el-card shadow="hover" style="height: 633px; margin-top: 20px">
-         <TransactionTable v-if="messageCount&&messageCount.length" :list="messageCount"/>
+         <TransactionTable :list="messageCount"/>
         </el-card>
       </el-col>
       <!--右边占据16-->
