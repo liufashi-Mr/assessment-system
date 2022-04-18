@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 10px">
+  <div style="margin: 10px" >
     <!--与上边距相差 20px的距离-->
     <el-row class="home" :gutter="20">
       <!--左边占据 8 -->
@@ -17,8 +17,8 @@
           </el-col>
         </el-card>
         <!--下面信息框-->
-        <el-card shadow="hover" style="height: 633px; margin-top: 20px">
-         <TransactionTable :list="messageCount"/>
+        <el-card shadow="hover" style="min-height: 633px; margin-top: 20px">
+         <TransactionTable v-if='messageCount&&messageCount.length' :list="messageCount"/>
         </el-card>
       </el-col>
       <!--右边占据16-->
@@ -26,10 +26,10 @@
         <!--6个显示金额-->
         <div class="num">
           <el-card class="card-panel" shadow="hover" v-for="item in nums" :key="item.name" @click.native="$router.push('/'+item.link)">
-            <el-col :span='12'>
+            <el-col :lg='{span:12}'>
               <img class="icon-img" :src="item.icon"></img>
             </el-col>
-            <el-col :span='12'>
+            <el-col :lg='{span:12}'>
               <div class="detail" style="text-align:right">
                 <p class="card-panel-text">{{item.name}}</p>
                 <count-to :start-val="0" :end-val="item.value" :duration="3000" class="card-panel-num" />
@@ -39,19 +39,19 @@
         </div>
         <!--显示流程图-->
         <el-card shadow="hover">
-          <div style="height: 280px">
+          <div style="min-height: 280px">
             <LineChart :chartData='chartData' />
           </div>
         </el-card>
         <!--左边最下面两个流程图-->
         <div class="graph">
           <el-card shadow="hover">
-            <div style="height: 260px">
+            <div style="min-height: 260px">
               <PieChart :chartData='pieChartData' />
             </div>
           </el-card>
           <el-card shadow="hover">
-            <div style="height: 260px">
+            <div style="min-height: 260px">
               <PieChart :chartData='raddarChartData' />
             </div>
           </el-card>
@@ -82,7 +82,7 @@ export default {
   data () {
     return {
       roleName: '',
-      messageCount:[],
+      messageCount:null,
       nums: [],
       chartData: null,
       pieChartData: null,

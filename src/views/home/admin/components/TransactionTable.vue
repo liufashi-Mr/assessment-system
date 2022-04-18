@@ -1,16 +1,16 @@
 <template>
   <el-table height="600" :data="list" style="width: 100%;padding-top: 15px;cursor: pointer;" @click.native="$router.push('/allCheck/index')">
-    <el-table-column label="审核奖项名称" min-width="200">
+    <el-table-column label="审核奖项名称">
       <template slot-scope="scope">
         {{ scope.row.rewardName  }}
       </template>
     </el-table-column>
-    <el-table-column label="申请人" width="195" align="center">
+    <el-table-column label="申请人" align="center">
       <template slot-scope="scope">
         {{ scope.row.studentName}}
       </template>
     </el-table-column>
-    <el-table-column label="申请状态" width="100" align="center">
+    <el-table-column label="申请状态" align="center">
       <template slot-scope="{row}">
          <el-tag v-if="row.applyStatus === -2" type="danger">
                 不通过
