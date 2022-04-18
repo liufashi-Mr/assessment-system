@@ -420,12 +420,14 @@
         >
       </span>
     </el-dialog>
+    <!--   
+      :direction="direction"
+      :before-close="handleClose" 
+    -->
     <el-drawer
       size="800px"
       title="查看成绩"
       :visible.sync="drawer"
-      :direction="direction"
-      :before-close="handleClose"
     >
       <div class="drawer">
         <el-table
@@ -583,9 +585,9 @@ export default {
   created() {
     this.getUniverseList();
     this.getStudentList(this.formSearch);
-    [1, 2].map(() => {
-      console.log(this);
-    });
+    // [1, 2].map(() => {
+    //   console.log(this);
+    // });
   },
   methods: {
     indexMethod(index) {

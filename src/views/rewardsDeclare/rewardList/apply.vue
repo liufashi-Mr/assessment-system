@@ -89,9 +89,9 @@ export default {
       this.form = {
         ...this.form,
         rewardId: this.detail.rewardId,
-        studentId: JSON.parse(getInfo())?.studentId,
-        studentName: JSON.parse(getInfo())?.studentName,
-        studentNumber: JSON.parse(getInfo())?.studentNumber,
+        studentId: getInfo()?.studentId,
+        studentName: getInfo()?.studentName,
+        studentNumber: getInfo()?.studentNumber,
       };
     },
   },

@@ -26,7 +26,7 @@ router.beforeEach(async(to, from, next) => {
         hasToken
       ])
       // resetRouter()
-      router.addRoutes(accessRoutes)
+      // router.addRoutes(accessRoutes)
       next()
     }
   } else {

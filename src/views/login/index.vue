@@ -219,7 +219,6 @@ export default {
             .dispatch("user/login", this.loginForm)
             .then(() => {
               this.$router.push('/');
-              console.log(1231)
               this.loading = false;
             })
             .catch(() => {

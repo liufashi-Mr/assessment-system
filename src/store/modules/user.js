@@ -38,10 +38,12 @@ const actions = {
       login({ username: username.trim(), password, role })
         .then((response) => {
           const { data } = response;
+          console.log(data);
           commit("SET_TOKEN", data[0].role);
+          commit("SET_NAME", data[0].username);
+          commit("SET_AVATAR", data[0].avatar||require('@/assets/avatar.jpg'));
           setToken(data[0].role);
           if (data[0].role === "student") {
-          console.log(data);
 
             setInfo(JSON.stringify({
               studentName: data[0].studentName,

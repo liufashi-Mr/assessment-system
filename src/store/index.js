@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import getters from "./getters";
+import createPersistedState from 'vuex-persistedstate'
 Vue.use(Vuex);
 
 // https://webpack.js.org/guides/dependency-management/#requirecontext
@@ -15,10 +16,13 @@ const modules = modulesFiles.keys().reduce((modules, modulePath) => {
   modules[moduleName] = value.default;
   return modules;
 }, {});
-
+const dataState = createPersistedState({
+  paths: ['user']
+})
 const store = new Vuex.Store({
   modules,
   getters,
+  plugins: [dataState]
 });
 
 export default store;

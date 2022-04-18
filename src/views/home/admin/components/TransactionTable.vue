@@ -1,55 +1,42 @@
 <template>
-  <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
+  <el-table height="600" :data="list" style="width: 100%;padding-top: 15px;cursor: pointer;" @click.native="$router.push('/allCheck/index')">
+    <el-table-column label="审核奖项名称" min-width="200">
       <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
+        {{ scope.row.rewardName  }}
       </template>
     </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
+    <el-table-column label="申请人" width="195" align="center">
       <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
+        {{ scope.row.studentName}}
       </template>
     </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
+    <el-table-column label="申请状态" width="100" align="center">
       <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
-        </el-tag>
+         <el-tag v-if="row.applyStatus === -2" type="danger">
+                不通过
+              </el-tag>
+              <el-tag v-if="row.applyStatus === 0" type="danger">
+                已驳回
+              </el-tag>
+              <el-tag v-if="row.applyStatus === 1" type="primary">
+                审核中
+              </el-tag>
+              <el-tag v-if="row.applyStatus === 2" type="success">
+                已通过
+              </el-tag>
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-import { transactionList } from '@/api/remote-search'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        success: 'success',
-        pending: 'danger'
-      }
-      return statusMap[status]
-    },
-    orderNoFilter(str) {
-      return str.substring(0, 30)
+  props:{
+    list:{
+      type:Array,
+      default:()=>[],
     }
   },
-  data() {
-    return {
-      list: null
-    }
-  },
-  created() {
-    this.fetchData()
-  },
-  methods: {
-    fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
-      })
-    }
-  }
 }
 </script>

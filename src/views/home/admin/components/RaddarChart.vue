@@ -23,6 +23,10 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData:{
+      type: Array,
+      default:()=>[]
     }
   },
   data() {
@@ -33,6 +37,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.initChart()
+      console.log(this.chartData);
     })
   },
   beforeDestroy() {
