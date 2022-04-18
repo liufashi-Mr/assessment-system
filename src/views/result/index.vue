@@ -1,5 +1,5 @@
 <template>
-  <div>奖励流程</div>
+  <div>fabu</div>
 </template>
 
 <script>

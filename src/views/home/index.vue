@@ -5,27 +5,25 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import adminDashboard from './admin'
-import editorDashboard from './editor'
+import { getToken } from "@/utils/auth";
+import adminDashboard from "./admin";
+import editorDashboard from "./editor";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: { adminDashboard, editorDashboard },
   data() {
     return {
-      currentRole: 'adminDashboard'
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'roles'
-    ])
+      currentRole: "adminDashboard",
+    };
   },
   created() {
-    if (!this.roles.includes('admin')) {
-      this.currentRole = 'editorDashboard'
+    this.currentRole = getToken();
+  },
+  created() {
+    if (!this.currentRole !== "admin") {
+      this.currentRole = "editorDashboard";
     }
-  }
-}
+  },
+};
 </script>

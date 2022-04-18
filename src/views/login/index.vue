@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="账号"
           name="username"
           type="text"
           tabindex="1"
@@ -42,10 +42,10 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
-            autocomplete="on"
+            autocomplete="off"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
             @keyup.enter.native="handleLogin"
@@ -57,7 +57,20 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
+      <el-form-item prop="role">
+        <el-select
+          v-model="loginForm.role"
+          placeholder="选择角色"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="role in roles"
+            :key="role.roleId"
+            :label="role.roleName"
+            :value="role.roleId"
+          />
+        </el-select>
+      </el-form-item>
       <el-button
         :loading="loading"
         type="primary"
@@ -107,22 +120,30 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+        callback(new Error("用户名不能为空"));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error("密码不能小于6位数"));
+      } else {
+        callback();
+      }
+    };
+    const validateRole = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error("请选择你的角色"));
       } else {
         callback();
       }
     };
     return {
       loginForm: {
-        username: "admin",
-        password: "111111",
+        username: "",
+        password: "",
+        role: "student",
       },
       loginRules: {
         username: [
@@ -131,6 +152,7 @@ export default {
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
         ],
+        role: [{ required: true, trigger: "select", validator: validateRole }],
       },
       passwordType: "password",
       capsTooltip: false,
@@ -138,6 +160,15 @@ export default {
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
+      roles: [
+        { roleName: "学生", roleId: "student" },
+        { roleName: "管理员", roleId: "admin" },
+        { roleName: "教务处", roleId: "office" },
+        { roleName: "指导老师", roleId: "teacher" },
+        { roleName: "学院", roleId: "college" },
+        { roleName: "学工处", roleId: "xuegongchu" },
+        { roleName: "校分管", roleId: "xiaofenguan" },
+      ],
     };
   },
   watch: {
@@ -187,10 +218,8 @@ export default {
           this.$store
             .dispatch("user/login", this.loginForm)
             .then(() => {
-              this.$router.push({
-                path: this.redirect || "/",
-                query: this.otherQuery,
-              });
+              this.$router.push('/');
+              console.log(1231)
               this.loading = false;
             })
             .catch(() => {
@@ -210,24 +239,6 @@ export default {
         return acc;
       }, {});
     },
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   },
 };
 </script>
@@ -295,7 +306,7 @@ $light_gray: #eee;
     max-width: 100%;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-80%);
+    transform: translate(-50%, -80%);
     overflow: hidden;
   }
 

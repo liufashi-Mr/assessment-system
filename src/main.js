@@ -19,7 +19,10 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+import XLSX from 'xlsx'
+import JsonExcel from 'vue-json-excel'
 
+Vue.component('downloadExcel', JsonExcel)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -29,14 +32,15 @@ import * as filters from './filters' // global filters
  * please remove it before going online ! ! !
  */
 // if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
+// const { mockXHR } = require('../mock')
+// mockXHR()
 // }
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   locale: enLang // 如果使用中文，无需设置，请删除
 })
+Vue.prototype.XLSX = XLSX 
 
 // register global utility filters
 Object.keys(filters).forEach(key => {
