@@ -47,12 +47,12 @@
         <div class="graph">
           <el-card shadow="hover">
             <div style="min-height: 260px">
-              <PieChart :chartData='pieChartData' />
+              <PieChart ref="PieChart_pie" />
             </div>
           </el-card>
           <el-card shadow="hover">
             <div style="min-height: 260px">
-              <PieChart :chartData='raddarChartData' />
+              <PieChart ref="PieChart_raddar" />
             </div>
           </el-card>
         </div>
@@ -85,8 +85,7 @@ export default {
       messageCount:null,
       nums: [],
       chartData: null,
-      pieChartData: null,
-      raddarChartData: null,
+      rewardsData:null
     }
   },
   computed: {
@@ -98,11 +97,12 @@ export default {
     TransactionTable,
     CountTo
   },
-  async created () {
+  async mounted () {
     this.roleName = getRoleName(getToken())
     await this.getStudentList()
     await this.getRewardsList()
     await this.getMessageCount()
+    await this.promiseRewardId()
   },
   methods: {
     async getStudentList () {
@@ -131,27 +131,8 @@ export default {
         icon: require('@/assets/home/graph-bar.png'),
         link: 'rewardsDeclare/rewardList'
       }
+      this.rewardsData = data
       this.nums.push(total_reward)
-      const rewardId = data.map(item => {
-        return {
-          name: item.rewardName,
-          id: item.id
-        }
-      })
-      const PromiseAll = rewardId.map(
-        item => new Promise(resolve => {
-          getRewardResult({ rewardId: item.id }).then(res => {
-            resolve(res)
-          }).catch(req => {
-            // 处理promise all 异常
-            return Promise.resolve(req)
-          })
-        })
-      )
-      Promise.all(PromiseAll).then(res => {
-        res.filter((item, index) => rewardId[index].value = item.data.length)
-        this.raddarChartData = rewardId
-      })
     },
     async getMessageCount () {
       const { data } = await getApplyList({ role: getToken() });
@@ -200,13 +181,38 @@ export default {
         expectedData,
         actualData
       }
-      this.pieChartData = [
+      this.$nextTick(()=>{
+        this.$refs.PieChart_pie.chartData = [
         total_apply_up,
         total_apply_out,
         total_apply_ing,
         total_apply_ret
       ]
+      })
     },
+    async promiseRewardId(){
+       const rewardId = this.rewardsData.map(item => {
+        return {
+          name: item.rewardName,
+          id: item.id
+        }
+      })
+      const PromiseAll = rewardId.map(
+        item => new Promise(resolve => {
+          getRewardResult({ rewardId: item.id }).then(res => {
+            resolve(res)
+          }).catch(req => {
+            // 处理promise all 异常
+            return Promise.resolve(req)
+          })
+        })
+      )
+      let res = await Promise.all(PromiseAll)
+      res.filter((item, index) => rewardId[index].value = item.data.length)
+      this.$nextTick(()=>{
+        this.$refs.PieChart_raddar.chartData = rewardId
+      })
+    }
   },
 }
 </script>

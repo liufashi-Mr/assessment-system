@@ -22,20 +22,29 @@ export default {
       type: String,
       default: '300px'
     },
-    chartData:{
-      type: Array,
-      default:()=>[]
-    }
+    // chartData:{
+    //   type: Array,
+    //   default:()=>[]
+    // }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      chartData:null
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+  // mounted() {
+  //   this.$nextTick(() => {
+  //     this.initChart()
+  //   })
+  // },
+  watch:{
+    chartData:{
+     deep:true,
+      handler(newVal, oldVal) {
+       this.initChart(newVal)
+      },
+    }
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -45,9 +54,9 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
+    initChart(newVal) {
       this.chart = echarts.init(this.$el, 'macarons')
-
+      console.log(newVal)
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -64,9 +73,9 @@ export default {
             roseType: 'radius',
             radius: [15, 75],
             center: ['50%', '38%'],
-            data: this.chartData,
+            data: newVal,
             animationEasing: 'cubicInOut',
-            animationDuration: 2600
+            animationDuration: 600
           }
         ]
       })

@@ -129,6 +129,7 @@ export default {
           animationEasing: 'quadraticOut'
         }]
       })
+      console.log(this.chart)
     }
   }
 }
