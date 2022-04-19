@@ -22,41 +22,7 @@
         </el-card>
       </el-col>
       <!--右边占据16-->
-      <el-col :lg='{span:18}' v-if="nums&&nums.length===6">
-        <!--6个显示金额-->
-        <div class="num">
-          <el-card class="card-panel" shadow="hover" v-for="item in nums" :key="item.name" @click.native="$router.push('/'+item.link)">
-            <el-col :lg='{span:12}'>
-              <img class="icon-img" :src="item.icon"></img>
-            </el-col>
-            <el-col :lg='{span:12}'>
-              <div class="detail" style="text-align:right">
-                <p class="card-panel-text">{{item.name}}</p>
-                <count-to :start-val="0" :end-val="item.value" :duration="3000" class="card-panel-num" />
-              </div>
-            </el-col>
-          </el-card>
-        </div>
-        <!--显示流程图-->
-        <el-card shadow="hover">
-          <div style="min-height: 280px">
-            <LineChart :chartData='chartData' />
-          </div>
-        </el-card>
-        <!--左边最下面两个流程图-->
-        <div class="graph">
-          <el-card shadow="hover">
-            <div style="min-height: 260px">
-              <PieChart ref="PieChart_pie" />
-            </div>
-          </el-card>
-          <el-card shadow="hover">
-            <div style="min-height: 260px">
-              <PieChart ref="PieChart_raddar" />
-            </div>
-          </el-card>
-        </div>
-      </el-col>
+
     </el-row>
   </div>
 </template>
@@ -181,14 +147,14 @@ export default {
         expectedData,
         actualData
       }
-      this.$nextTick(()=>{
-        this.$refs.PieChart_pie.chartData = [
-        total_apply_up,
-        total_apply_out,
-        total_apply_ing,
-        total_apply_ret
-      ]
-      })
+      // this.$nextTick(()=>{
+      //   this.$refs.PieChart_pie.chartData = [
+      //   total_apply_up,
+      //   total_apply_out,
+      //   total_apply_ing,
+      //   total_apply_ret
+      // ]
+      // })
     },
     async promiseRewardId(){
        const rewardId = this.rewardsData.map(item => {
@@ -209,9 +175,9 @@ export default {
       )
       let res = await Promise.all(PromiseAll)
       res.filter((item, index) => rewardId[index].value = item.data.length)
-      this.$nextTick(()=>{
-        this.$refs.PieChart_raddar.chartData = rewardId
-      })
+      // this.$nextTick(()=>{
+      //   this.$refs.PieChart_raddar.chartData = rewardId
+      // })
     }
   },
 }

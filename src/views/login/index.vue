@@ -9,7 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">高校评奖系统</h3>
+        <h3 class="title">高校评优评奖系统</h3>
       </div>
 
       <el-form-item prop="username">

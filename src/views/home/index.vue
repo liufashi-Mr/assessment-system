@@ -18,12 +18,9 @@ export default {
     };
   },
   created() {
-    this.currentRole = getToken();
-  },
-  created() {
-    if (!this.currentRole !== "admin") {
-      this.currentRole = "editorDashboard";
-    }
+    console.log(getToken() === "admin")
+    this.currentRole =
+      getToken() === "admin" ? "adminDashboard" : "editorDashboard";
   },
 };
 </script>
