@@ -110,9 +110,9 @@
               @click="confirm(scope.row)"
               >已驳回</el-button
             >
-             <el-button
+            <el-button
               style="margin-right: 5px"
-              v-if="role === 'student' && scope.row.applyStatus ===-2"
+              v-if="role === 'student' && scope.row.applyStatus === -2"
               type="danger"
               size="mini"
               icon="iconfont icon-edit"
@@ -158,7 +158,7 @@
               @onConfirm="deleteHandle(scope.row.applyId)"
             >
               <el-button
-                v-if="role === 'student'&&scope.row.applyStatus !== 2"
+                v-if="role === 'student' && scope.row.applyStatus !== 2"
                 type="danger"
                 size="mini"
                 plain
@@ -266,7 +266,10 @@
           <div>{{ rewardDetail.description }}</div>
         </div>
         <div style="height: 300px; font-size: 18px">
-          <el-steps direction="vertical" :active="5">
+          <el-steps
+            direction="vertical"
+            :active="+getActiveStep(applyDetail && applyDetail.applyStep)"
+          >
             <el-step
               v-if="rewardDetail.stepOne"
               :title="rewardDetail.stepOne"
@@ -384,6 +387,7 @@ import {
   getRewardDetail,
   getStudentDetail,
   getApplyDetail,
+  getProcessDetail,
 } from "@/api/rewards";
 import { getUniverse } from "@/api/manage";
 import { getInfo, getToken } from "@/utils/auth";
@@ -415,6 +419,8 @@ export default {
         studentNumber: "",
       },
       role: "",
+      applyDetail: { applyAccessory: "[]" },
+      processDetail: {},
     };
   },
   created() {
@@ -425,6 +431,37 @@ export default {
     this.getRoleApplyList();
   },
   methods: {
+    getActiveStep(current) {
+      let res = "";
+      if (current === "完成") return 5;
+      Object.keys(this.processDetail).forEach((item, index) => {
+        if (this.processDetail[item] === current) {
+          switch (item) {
+            case "stepOne": {
+              res = 0;
+              return;
+            }
+            case "stepTwo": {
+              res = 1;
+              return;
+            }
+            case "stepThree": {
+              res = 2;
+              return;
+            }
+            case "stepFour": {
+              res = 3;
+              return;
+            }
+            default: {
+              res = 4;
+              return;
+            }
+          }
+        }
+      });
+      return res;
+    },
     getRoleApplyList() {
       getApplyList({
         studentId: getInfo() ? JSON.parse(getInfo())?.studentId : null,
@@ -534,7 +571,7 @@ export default {
         }
       });
     },
-    studentDetail({ rewardId, studentId }) {
+    studentDetail({ applyId, rewardId, studentId, rewardProcess }) {
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
       });
@@ -545,6 +582,12 @@ export default {
         .finally(() => {
           this.drawer = true;
         });
+      getProcessDetail({ flowId: rewardProcess }).then(({ data }) => {
+        this.processDetail = data[0];
+      });
+      getApplyDetail({ applyId }).then(({ data }) => {
+        this.applyDetail = data[0];
+      });
     },
   },
 };
