@@ -291,6 +291,7 @@ export const asyncRoutes = [
   {
     path: "/myApply",
     component: Layout,
+    hidden: true,
     children: [
       {
         path: "index",
@@ -329,7 +330,7 @@ const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: [...constantRoutes,...asyncRoutes],
+    routes: [...constantRoutes, ...asyncRoutes],
   });
 
 const router = createRouter();
