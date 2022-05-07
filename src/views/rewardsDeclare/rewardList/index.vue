@@ -497,8 +497,12 @@ export default {
     },
     // 获取数据列表
     getDataList() {
-      let dataParam = {};
-      dataParam = this.formSearch;
+      const dataParam = { ...this.formSearch };
+      if (dataParam?.studentValue?.length) {
+        dataParam.typeId = dataParam.studentValue[0];
+        dataParam.collegeId = dataParam.studentValue[1] || "";
+        dataParam.majorId = dataParam.studentValue[2] || "";
+      }
       dataParam.currentPage = this.pageData.currentPage;
       dataParam.pageSize = this.pageData.pageSize;
       getRewards(dataParam).then((response) => {
