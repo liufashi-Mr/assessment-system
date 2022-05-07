@@ -228,7 +228,12 @@
         <el-button type="primary" @click="submitApply()">确 定</el-button>
       </div>
     </el-dialog>
-    <el-drawer size="800px" title="奖励详情" :visible.sync="drawer">
+    <el-drawer
+      style="overflow-y: scroll"
+      size="800px"
+      title="奖励详情"
+      :visible.sync="drawer"
+    >
       <div class="drawer">
         <div>
           <div>奖励名称：</div>
@@ -594,6 +599,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep {
+  .el-drawer__body {
+    overflow-y: scroll;
+  }
+}
 .drawer {
   padding: 0 24px;
   > div {

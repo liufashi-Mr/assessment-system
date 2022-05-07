@@ -130,13 +130,16 @@
         >
           <template slot-scope="scope">
             <el-button
-              :disabled="getStatus(
+              :disabled="
+                getStatus(
                   new Date(scope.row.startTime).getTime(),
                   new Date(scope.row.endTime).getTime()
-                )==='已结束'||getStatus(
+                ) === '已结束' ||
+                getStatus(
                   new Date(scope.row.startTime).getTime(),
                   new Date(scope.row.endTime).getTime()
-                )==='未开始'"
+                ) === '未开始'
+              "
               v-if="$store.getters.token === 'student'"
               type="primary"
               size="mini"
@@ -280,7 +283,12 @@
         </span>
       </el-dialog>
     </el-card>
-    <el-drawer size="800px" title="奖励详情" :visible.sync="drawer">
+    <el-drawer
+      style="overflow-y: scroll"
+      size="800px"
+      title="奖励详情"
+      :visible.sync="drawer"
+    >
       <div class="drawer">
         <div>
           <div>奖励名称：</div>
@@ -635,8 +643,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep {
+  .el-drawer__body {
+    overflow-y: scroll;
+  }
+}
 .drawer {
   padding: 0 24px;
+  overflow-y: scroll;
   > div {
     display: flex;
     font-size: 14px;
