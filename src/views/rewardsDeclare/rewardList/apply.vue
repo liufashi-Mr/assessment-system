@@ -89,9 +89,9 @@ export default {
       this.form = {
         ...this.form,
         rewardId: this.detail.rewardId,
-        studentId: getInfo()?.studentId,
-        studentName: getInfo()?.studentName,
-        studentNumber: getInfo()?.studentNumber,
+        studentId: JSON.parse(getInfo())?.studentId,
+        studentName: JSON.parse(getInfo())?.studentName,
+        studentNumber: JSON.parse(getInfo())?.studentNumber,
       };
     },
   },
@@ -128,8 +128,10 @@ export default {
       );
     },
     beforeUpload(file) {
-      const fileType = file.name.split(".")[file.name.split(".").length-1].toUpperCase();
-      console.log(fileType)
+      const fileType = file.name
+        .split(".")
+        [file.name.split(".").length - 1].toUpperCase();
+      console.log(fileType);
       if (
         !["PDF", "DOCX", "PNG", "JPG", "JPEG", "DOC", "XLSX", "CSV"].includes(
           fileType
