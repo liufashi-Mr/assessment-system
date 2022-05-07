@@ -140,6 +140,13 @@
             </span>
           </template></el-table-column
         >
+        <el-table-column header-align="center" align="center" label="年级">
+          <template slot-scope="scope">
+            <span>
+              {{ scope.row.grade || "不限" }}
+            </span>
+          </template></el-table-column
+        >
         <el-table-column
           align="center"
           label="操作"
@@ -228,7 +235,8 @@
         top="10vh"
       >
         <div style="color: red; margin-bottom: 20px; line-height: 24px">
-          *注意： 时间不选择时则为长期有效，发放对象不选则为全体学生。
+          *注意：
+          时间不选择时则为长期有效，发放对象不选则为全体学生，年级不选为所有年级。
         </div>
         <el-form
           ref="dataForm"
@@ -258,6 +266,18 @@
               filterable
               clearable
             ></el-cascader>
+          </el-form-item>
+          <el-form-item label="年级" prop="grade">
+            <el-select
+              clearable
+              v-model="dataForm.grade"
+              placeholder="请选择学生年级"
+            >
+              <el-option label="大一" value="大一"></el-option>
+              <el-option label="大二" value="大二"></el-option>
+              <el-option label="大三" value="大三"></el-option>
+              <el-option label="大四" value="大四"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="开始时间" prop="startTime">
             <el-date-picker
@@ -434,6 +454,7 @@ export default {
         endTime: "",
         studentValue: [],
         rewardProcess: 1,
+        grade: "",
       },
       pickerOptions: {
         shortcuts: [
@@ -602,12 +623,12 @@ export default {
             +row.majorId,
           ].filter((item) => item);
           this.dataForm.rewardProcess = row.rewardProcess;
+          this.dataForm.grade = row.grade;
         }
       });
     },
     // 表单提交
     dataFormSubmit() {
-      console.log(this.dataForm.studentValue);
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -622,6 +643,7 @@ export default {
               ? moment(this.dataForm.endTime).format("YYYY-MM-DD")
               : "",
             typeId: this.dataForm.studentValue[0],
+            grade: this.dataForm.grade,
             collegeId: this.dataForm.studentValue[1],
             majorId: this.dataForm.studentValue[2],
             rewardProcess: this.dataForm.rewardProcess,

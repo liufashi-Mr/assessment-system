@@ -12,7 +12,7 @@
         <el-button type="success"> 全部导出 </el-button>
       </download-excel>
       <div class="switch">
-        <div>仅看已通过：</div>
+        <div>查看所有：</div>
         <el-switch
           v-model="getAll"
           active-color="#13ce66"
