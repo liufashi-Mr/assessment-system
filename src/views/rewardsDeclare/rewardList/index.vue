@@ -16,6 +16,24 @@
             @keydown.enter.native="onSearch"
           />
         </el-form-item>
+        <el-form-item label="专业/学院：">
+          <el-cascader
+            v-model="formSearch.studentValue"
+            :options="universeList"
+            :props="{ checkStrictly: true, label: 'name', value: 'id' }"
+            placeholder="请选择分类"
+            filterable
+            clearable
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="年级：" prop="grade">
+          <el-select v-model="formSearch.grade" placeholder="请选择学生年级">
+            <el-option label="大一" value="大一"></el-option>
+            <el-option label="大二" value="大二"></el-option>
+            <el-option label="大三" value="大三"></el-option>
+            <el-option label="大四" value="大四"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSearch">
             <i style="font-size: 14px" class="el-icon-search" />
@@ -396,6 +414,8 @@ export default {
       rewardDetail: {},
       formSearch: {
         keyword: "",
+        studentValue: "",
+        grade: "",
       },
       disabled: false,
       pageData: {
