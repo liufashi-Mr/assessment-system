@@ -34,6 +34,19 @@
             <el-option label="大四" value="大四"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="时间：" prop="date">
+          <el-date-picker
+            v-model="formSearch.date"
+            type="monthrange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始月份"
+            end-placeholder="结束月份"
+            :picker-options="searchPickerOptions"
+          >
+          </el-date-picker>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSearch">
             <i style="font-size: 14px" class="el-icon-search" />
@@ -436,6 +449,53 @@ export default {
         keyword: "",
         studentValue: "",
         grade: "",
+        date: "",
+      },
+      searchPickerOptions: {
+        shortcuts: [
+          {
+            text: "本学期",
+            onClick(picker) {
+              const nowTime = new Date();
+              const nowTerm = nowTime.getMonth() + 1;
+              if (nowTerm >= 3 && nowTerm <= 8) {
+                picker.$emit("pick", [
+                  new Date().setMonth(2),
+                  new Date().setMonth(8),
+                ]);
+              } else {
+                picker.$emit("pick", [
+                  new Date().setMonth(9),
+                  new Date(
+                    new Date().setFullYear(new Date().getFullYear() + 1)
+                  ).setMonth(1),
+                ]);
+              }
+            },
+          },
+          {
+            text: "本学年",
+            onClick(picker) {
+              const nowTime = new Date();
+              const nowTerm = nowTime.getMonth() + 1;
+              if (nowTerm >= 3 && nowTerm <= 8) {
+                picker.$emit("pick", [
+                  new Date(
+                    nowTime.setFullYear(nowTime.getFullYear() - 1)
+                  ).setMonth(8),
+                  new Date().setMonth(8),
+                ]);
+              } else {
+                picker.$emit("pick", [
+                  new Date().setMonth(2),
+                  new Date(
+                    nowTime.setFullYear(nowTime.getFullYear() + 1)
+                  ).setMonth(2),
+                ]);
+              }
+            },
+          },
+        ],
       },
       disabled: false,
       pageData: {
@@ -523,6 +583,9 @@ export default {
         dataParam.typeId = dataParam.studentValue[0];
         dataParam.collegeId = dataParam.studentValue[1] || "";
         dataParam.majorId = dataParam.studentValue[2] || "";
+      }
+      if (dataParam?.date?.length) {
+        dataParam.date = dataParam.date.map((x) => moment(x).format("YYYY-MM"));
       }
       dataParam.currentPage = this.pageData.currentPage;
       dataParam.pageSize = this.pageData.pageSize;

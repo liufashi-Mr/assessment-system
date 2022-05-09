@@ -1,26 +1,84 @@
 <template>
   <div class="container">
-    <div class="btn">
-      <download-excel
-        class="export-btn"
-        :data="allResult || []"
-        :fields="jsonFields"
-        type="xls"
-        header="全部数据报表"
-        name="全部报表.xls"
+    <el-card style="margin-bottom: 24px" class="box-card search-card">
+      <el-form
+        ref="formSearch"
+        :inline="true"
+        :model="formSearch"
+        class="search-form"
+        size="small"
+        @submit.native.prevent
       >
-        <el-button type="success"> 全部导出 </el-button>
-      </download-excel>
-      <div class="switch">
-        <div>查看所有：</div>
-        <el-switch
-          v-model="getAll"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
+        <el-form-item label="奖项名称：">
+          <el-input
+            v-model="formSearch.keyword"
+            placeholder="请输入奖项名称"
+            @keydown.enter.native="onSearch"
+          />
+        </el-form-item>
+        <el-form-item label="专业/学院：">
+          <el-cascader
+            v-model="formSearch.studentValue"
+            :options="universeList"
+            :props="{ checkStrictly: true, label: 'name', value: 'id' }"
+            placeholder="请选择分类"
+            filterable
+            clearable
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="年级：" prop="grade">
+          <el-select v-model="formSearch.grade" placeholder="请选择学生年级">
+            <el-option label="大一" value="大一"></el-option>
+            <el-option label="大二" value="大二"></el-option>
+            <el-option label="大三" value="大三"></el-option>
+            <el-option label="大四" value="大四"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间：" prop="date">
+          <el-date-picker
+            v-model="formSearch.date"
+            type="monthrange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始月份"
+            end-placeholder="结束月份"
+            :picker-options="searchPickerOptions"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSearch">
+            <i style="font-size: 14px" class="el-icon-search" />
+          </el-button>
+          <el-button @click="onSearchReset">
+            <i style="font-size: 14px" class="el-icon-refresh" />
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <div class="btn">
+        <download-excel
+          class="export-btn"
+          :data="allResult || []"
+          :fields="jsonFields"
+          type="xls"
+          header="全部数据报表"
+          name="全部报表.xls"
         >
-        </el-switch>
+          <el-button type="success"> 全部导出 </el-button>
+        </download-excel>
+        <div class="switch">
+          <div>查看所有：</div>
+          <el-switch
+            v-model="getAll"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          >
+          </el-switch>
+        </div>
       </div>
-    </div>
+    </el-card>
+
     <el-card v-loading="loading" element-loading-text="拼命加载中">
       <el-collapse accordion @change="handleChange">
         <el-collapse-item
@@ -155,6 +213,8 @@ export default {
   },
   data() {
     return {
+      universeList: [],
+      flattenUniverseList: [],
       loading: false,
       getAll: false,
       allResult: [],
@@ -174,9 +234,65 @@ export default {
         审核状态: "",
       },
       rewardId: "",
+      formSearch: {
+        keyword: "",
+        studentValue: "",
+        grade: "",
+        date: "",
+      },
+      searchPickerOptions: {
+        shortcuts: [
+          {
+            text: "本学期",
+            onClick(picker) {
+              const nowTime = new Date();
+              const nowTerm = nowTime.getMonth() + 1;
+              if (nowTerm >= 3 && nowTerm <= 8) {
+                picker.$emit("pick", [
+                  new Date().setMonth(2),
+                  new Date().setMonth(8),
+                ]);
+              } else {
+                picker.$emit("pick", [
+                  new Date().setMonth(9),
+                  new Date(
+                    new Date().setFullYear(new Date().getFullYear() + 1)
+                  ).setMonth(1),
+                ]);
+              }
+            },
+          },
+          {
+            text: "本学年",
+            onClick(picker) {
+              const nowTime = new Date();
+              const nowTerm = nowTime.getMonth() + 1;
+              if (nowTerm >= 3 && nowTerm <= 8) {
+                picker.$emit("pick", [
+                  new Date(
+                    nowTime.setFullYear(nowTime.getFullYear() - 1)
+                  ).setMonth(8),
+                  new Date().setMonth(8),
+                ]);
+              } else {
+                picker.$emit("pick", [
+                  new Date().setMonth(2),
+                  new Date(
+                    nowTime.setFullYear(nowTime.getFullYear() + 1)
+                  ).setMonth(2),
+                ]);
+              }
+            },
+          },
+        ],
+      },
     };
   },
   created() {
+    getUniverse().then((res) => {
+      this.universeList = res.data;
+      this.flattenUniverseList = res.flatData;
+    });
     getAllRewardResult({ getAll: this.getAll }).then(({ data }) => {
       this.allResult = (data.length && data) || [];
     });
@@ -211,6 +327,8 @@ export default {
     });
   },
   methods: {
+    onSearch(e) {},
+    onSearchReset() {},
     getStatus(value) {
       if (value === -1) {
         return "待学生确认";
