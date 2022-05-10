@@ -31,7 +31,7 @@
                       :data="tableData"
                       :fields="jsonFields"
                       type="xls"
-                      header="数据报表"
+                      header="数据 报表"
                       name="数据报表.xls"
                       ><el-button size="mini" type="success"
                         >导出报表</el-button
@@ -435,10 +435,8 @@ export default {
       getRewards(dataParam).then(({ data }) => {
         const res = data.map((x) => x.id);
         if (allResult?.length) {
-          this.allResult = allResult.filter((x) =>
-            res.includes(x.rewardId)
-          );
-        }else{
+          this.allResult = allResult.filter((x) => res.includes(x.rewardId));
+        } else {
           this.allResult = this.allResult.filter((x) =>
             res.includes(x.rewardId)
           );
@@ -448,7 +446,13 @@ export default {
         }
       });
     },
-    onSearchReset() {},
+    onSearchReset() {
+      this.formSearch = {};
+      getAllRewardResult({ getAll: this.getAll }).then(({ data }) => {
+        this.allResult = (data.length && data) || [];
+        this.onSearch()
+      });
+    },
     getStatus(value) {
       if (value === -1) {
         return "待学生确认";
