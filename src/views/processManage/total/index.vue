@@ -296,6 +296,8 @@
 import JsonExcel from "vue-json-excel";
 import { getRewardResult, getRewards, getAllRewardResult } from "@/api/rewards";
 import { getUniverse } from "@/api/manage";
+import moment from "moment";
+
 export default {
   components: {
     DownloadExcel: JsonExcel,
