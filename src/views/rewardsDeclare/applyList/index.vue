@@ -351,9 +351,13 @@
         </div>
         <div v-if="role === 'student'">
           <div>
-            <div style="color: red">
+            <div v-if="applyStatus === -1 && role === 'student'" style="color: red">
               *
               为减轻学校老师工作量请同学们确定是否满足奖项的申请条件，若已获悉该奖励的申请条件,请点击确定来确定申请
+            </div>
+            <div v-if="applyStatus === 0 && role === 'student'" style="color: red">
+              *
+              你的申请被驳回，请确认满足条件后重新提交
             </div>
             <br />
             <div>
@@ -367,7 +371,7 @@
                 >确定申请</el-button
               >
               <el-button
-                v-if="applyStatus === 0"
+                v-if="applyStatus === 0 && role === 'student'"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -576,9 +580,16 @@ export default {
         }
       });
     },
-    studentDetail({ applyId, rewardId, studentId, rewardProcess }) {
+    studentDetail({
+      applyId,
+      rewardId,
+      studentId,
+      rewardProcess,
+      applyStatus,
+    }) {
       getStudentDetail({ studentId }).then(({ data }) => {
         this.markDetail = data;
+        this.applyStatus = applyStatus;
       });
       getRewardDetail({ rewardId })
         .then(({ data }) => {
