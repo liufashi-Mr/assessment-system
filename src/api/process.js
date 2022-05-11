@@ -21,3 +21,10 @@ export function auditProcess(data) {
     data,
   });
 }
+export function auditProcessSure(data) {
+  return request({
+    url: "/process/auditProcessSure",
+    method: "post",
+    data,
+  });
+}
