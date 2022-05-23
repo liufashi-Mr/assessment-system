@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <el-tabs v-model="activeName" type="card">
+      <!-- 学生管理tab -->
       <el-tab-pane label="学生管理" name="student">
         <div>
           <el-card class="box-card search-card">
@@ -219,6 +220,7 @@
           </el-card>
         </div>
       </el-tab-pane>
+      <!-- 学校管理tab -->
       <el-tab-pane label="学校管理" name="universe">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
@@ -323,6 +325,7 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
+    <!-- 学校管理弹窗 -->
     <el-dialog
       title="新增"
       :close-on-click-modal="false"
@@ -352,6 +355,7 @@
         >
       </span>
     </el-dialog>
+    <!-- 学生信息添加弹窗 -->
     <el-dialog
       v-if="addOrUpdateVisible"
       ref="addOrUpdate"
@@ -424,6 +428,7 @@
       :direction="direction"
       :before-close="handleClose" 
     -->
+    <!-- 查看成绩抽屉 -->
     <el-drawer
       size="800px"
       title="查看成绩"
@@ -507,6 +512,7 @@
 </template>
 
 <script>
+// 用户管理,学生管理 ,校管理 管理员显示该页面
 import {
   getUniverse,
   addUniverse,

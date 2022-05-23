@@ -334,6 +334,7 @@
         </span>
       </el-dialog>
     </el-card>
+    <!-- 教务处申请抽屉 -->
     <el-drawer
       style="overflow-y: scroll"
       size="800px"
@@ -420,6 +421,7 @@
 </template>
 
 <script>
+// 奖励列表页面 教务处可申请
 import {
   getRewards,
   updateReward,

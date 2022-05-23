@@ -113,7 +113,7 @@
 <script>
 import { validUsername } from "@/utils/validate";
 import SocialSign from "./components/SocialSignin";
-
+// 登录页面
 export default {
   name: "Login",
   components: { SocialSign },

@@ -18,6 +18,7 @@
             overflow: auto;
           "
         >
+        <!-- 以下为表格列信息 -->
           <el-table-column
             align="center"
             type="index"
@@ -252,6 +253,7 @@
 </template>
 
 <script>
+// 我的申请列表
 import {
   getApplyList,
   getApplyDetail,

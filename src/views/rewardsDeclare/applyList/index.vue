@@ -228,6 +228,7 @@
         <el-button type="primary" @click="submitApply()">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 查看申请详情 -->
     <el-drawer
       style="overflow-y: scroll"
       size="800px"

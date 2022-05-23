@@ -65,6 +65,7 @@
   </div>
 </template>
 <script>
+// 申请奖励弹窗
 import { getInfo } from "@/utils/auth";
 import { updateApply } from "@/api/rewards";
 export default {

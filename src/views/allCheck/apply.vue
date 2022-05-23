@@ -85,6 +85,7 @@ export default {
     };
   },
   created() {
+    // 申请时在浏览器拿到学生信息
     this.form = {
       ...this.form,
       applyId: this.detail.applyId,
