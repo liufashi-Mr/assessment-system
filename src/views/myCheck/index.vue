@@ -115,7 +115,7 @@
                 >去审核</el-button
               >
               <el-button
-                v-if="role !== 'student' && (scope.row.applyStatus === 2)"
+                v-if="role !== 'student' && scope.row.applyStatus === 2"
                 type="primary"
                 size="mini"
                 icon="iconfont icon-edit"
@@ -320,9 +320,11 @@ export default {
             nextStep: this.getNextStep(this.applyDetail.applyStep),
           }).then((res) => {
             if (res.code === 200) {
-              this.$message.success(
-                val == 1 ? "审核已通过" : "审核不通过或驳回"
-              );
+              if (val === 2) this.$message.success("审核已通过");
+              if (val === 0)
+                this.$message.success("审核已驳回,等待学生修改后重新提交");
+              if (val === 3)
+                this.$message.success("审核已不通过");
               this.getRoleApplyList();
               this.page = true;
             }
